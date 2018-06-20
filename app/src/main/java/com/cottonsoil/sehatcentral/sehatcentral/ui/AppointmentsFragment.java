@@ -12,12 +12,11 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.cottonsoil.sehatcentral.R;
-import com.cottonsoil.sehatcentral.sehatcentral.models.Appointment;
-import com.cottonsoil.sehatcentral.sehatcentral.models.AppointmentDetails;
-import com.cottonsoil.sehatcentral.sehatcentral.models.AppointmentList;
-import com.cottonsoil.sehatcentral.sehatcentral.models.Authorization;
-import com.cottonsoil.sehatcentral.sehatcentral.repository.ApiInterface;
-import com.cottonsoil.sehatcentral.sehatcentral.repository.ServiceBuilder;
+import com.cottonsoil.sehatcentral.sehatcentral.data.models.Appointment;
+import com.cottonsoil.sehatcentral.sehatcentral.data.models.AppointmentDetails;
+import com.cottonsoil.sehatcentral.sehatcentral.data.models.AppointmentList;
+import com.cottonsoil.sehatcentral.sehatcentral.data.network.ApiInterface;
+import com.cottonsoil.sehatcentral.sehatcentral.data.network.ServiceBuilder;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;

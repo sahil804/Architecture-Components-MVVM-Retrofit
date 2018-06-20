@@ -1,13 +1,12 @@
-package com.cottonsoil.sehatcentral.sehatcentral.repository;
+package com.cottonsoil.sehatcentral.sehatcentral.data.network;
 
-import com.cottonsoil.sehatcentral.sehatcentral.models.AppointmentDetails;
-import com.cottonsoil.sehatcentral.sehatcentral.models.AppointmentList;
-import com.cottonsoil.sehatcentral.sehatcentral.models.Authorization;
+import com.cottonsoil.sehatcentral.sehatcentral.data.models.AppointmentDetails;
+import com.cottonsoil.sehatcentral.sehatcentral.data.models.AppointmentList;
+import com.cottonsoil.sehatcentral.sehatcentral.data.models.Authorization;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
-import retrofit2.http.POST;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 

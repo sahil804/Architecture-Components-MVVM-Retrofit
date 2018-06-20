@@ -27,9 +27,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cottonsoil.sehatcentral.R;
-import com.cottonsoil.sehatcentral.sehatcentral.models.Authorization;
-import com.cottonsoil.sehatcentral.sehatcentral.repository.ApiInterface;
-import com.cottonsoil.sehatcentral.sehatcentral.repository.ServiceBuilder;
+import com.cottonsoil.sehatcentral.sehatcentral.data.models.Authorization;
+import com.cottonsoil.sehatcentral.sehatcentral.data.network.ApiInterface;
+import com.cottonsoil.sehatcentral.sehatcentral.data.network.ServiceBuilder;
 
 import retrofit2.Call;
 import retrofit2.Callback;

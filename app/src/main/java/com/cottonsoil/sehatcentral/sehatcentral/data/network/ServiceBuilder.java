@@ -1,8 +1,6 @@
-package com.cottonsoil.sehatcentral.sehatcentral.repository;
+package com.cottonsoil.sehatcentral.sehatcentral.data.network;
 
-import android.content.Intent;
 import android.os.Build;
-import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.Locale;

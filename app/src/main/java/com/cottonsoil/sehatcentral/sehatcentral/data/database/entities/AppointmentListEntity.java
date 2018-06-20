@@ -1,4 +1,4 @@
-package com.cottonsoil.sehatcentral.sehatcentral.database;
+package com.cottonsoil.sehatcentral.sehatcentral.data.database.entities;
 
 
 import android.arch.persistence.room.ColumnInfo;

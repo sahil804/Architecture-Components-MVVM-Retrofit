@@ -1,4 +1,4 @@
-package com.cottonsoil.sehatcentral.sehatcentral.repository;
+package com.cottonsoil.sehatcentral.sehatcentral.data.network;
 
 import java.security.cert.CertificateException;
 
