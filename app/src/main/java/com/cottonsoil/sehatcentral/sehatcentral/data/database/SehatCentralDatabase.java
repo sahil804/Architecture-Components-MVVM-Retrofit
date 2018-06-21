@@ -5,6 +5,9 @@ import android.arch.persistence.room.RoomDatabase;
 import android.content.Context;
 import android.util.Log;
 
+import com.cottonsoil.sehatcentral.sehatcentral.data.database.dao.AppointmentDetailDao;
+import com.cottonsoil.sehatcentral.sehatcentral.data.database.dao.AppointmentListDao;
+
 public abstract class SehatCentralDatabase extends RoomDatabase{
     private static final String LOG_TAG = SehatCentralDatabase.class.getSimpleName();
     private static final String DATABASE_NAME = "sehatCentral";
@@ -25,4 +28,6 @@ public abstract class SehatCentralDatabase extends RoomDatabase{
         return sInstance;
     }
 
+    public abstract AppointmentDetailDao appointmentDetailDao();
+    public abstract AppointmentListDao appointmentListDao();
 }

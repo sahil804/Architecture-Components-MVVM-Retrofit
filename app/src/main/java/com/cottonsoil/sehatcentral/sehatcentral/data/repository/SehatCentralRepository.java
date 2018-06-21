@@ -82,7 +82,7 @@ public class SehatCentralRepository {
         return sInstance;
     }
 
-    public LiveData<List<AppointmentDetails>> getCurrentWeatherForecasts() {
+    public LiveData<List<AppointmentDetails>> getAppointmentDetailsList() {
         /*initializeData();
         Date today = SunshineDateUtils.getNormalizedUtcDateForToday();*/
         /*LiveData<List<AppointmentDetails>> appointmentDetailsList =
