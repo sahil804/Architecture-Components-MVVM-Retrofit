@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import com.cottonsoil.sehatcentral.sehatcentral.data.database.entities.AppointmentEntity;
 import com.cottonsoil.sehatcentral.sehatcentral.data.models.Appointment;
 import com.cottonsoil.sehatcentral.sehatcentral.data.models.AppointmentDetails;
 import com.cottonsoil.sehatcentral.sehatcentral.data.models.AppointmentList;
@@ -28,7 +29,12 @@ public class SehatNetworkDataSource {
     String accessToken;
     String provider;
 
-    private final MutableLiveData<AppointmentList> appointmentList = new MutableLiveData<>();
+    private final MutableLiveData<List<Appointment>> appointmentList = new MutableLiveData<>();
+
+    public MutableLiveData<List<AppointmentDetails>> getAppointmentDetails() {
+        return appointmentDetails;
+    }
+
     private final MutableLiveData<List<AppointmentDetails>> appointmentDetails = new MutableLiveData<>();
     public SehatNetworkDataSource(Context appContext) {
         SharedPreferences mSettings = PreferenceManager.getDefaultSharedPreferences(appContext);
@@ -37,7 +43,7 @@ public class SehatNetworkDataSource {
         Log.d(TAG,"accessToken: "+accessToken + " provider: "+provider);
     }
 
-    public MutableLiveData<AppointmentList> getAppointmentList() {
+    public MutableLiveData<List<Appointment>> getAppointmentList() {
         return appointmentList;
     }
 
@@ -59,7 +65,7 @@ public class SehatNetworkDataSource {
                             list.getAppointments()) {
                         Log.i(TAG, "onResponse: " + appointment);
                     }
-                    appointmentList.setValue(list);
+                    appointmentList.setValue(list.getAppointments());
                 }
             }
 
@@ -70,30 +76,38 @@ public class SehatNetworkDataSource {
         });
     }
 
-    public List<AppointmentDetails> getAppointmentDetailsList(AppointmentList listAppointment) {
+    public MutableLiveData<List<AppointmentDetails>> getAppointmentDetailsList(List<AppointmentEntity> listAppointment) {
+        MutableLiveData<List<AppointmentDetails>> listMutableLiveData = new MutableLiveData<>();
         ApiInterface apiInterface = ServiceBuilder.buildService(ApiInterface.class);
         Call<AppointmentDetails> authorizationCall = null;
         try {
             List<AppointmentDetails> appointmentDetailsList = new ArrayList<>();
-            for (Appointment appoint: listAppointment.getAppointments()) {
+            int i = 0;
+            for (AppointmentEntity appoint: listAppointment) {
+                if(++i >= 10) {
+                    break;
+                }
                 authorizationCall = apiInterface.getAppointment(URLDecoder.decode(accessToken, "UTF-8"), appoint.getUuid());
-                Response<AppointmentDetails> response = authorizationCall.execute();
-                /*authorizationCall.enqueue(new Callback<AppointmentDetails>() {
+               // Response<AppointmentDetails> response = authorizationCall.execute();
+                authorizationCall.enqueue(new Callback<AppointmentDetails>() {
                     @Override
                     public void onResponse(Call<AppointmentDetails> call, Response<AppointmentDetails> response) {
                         AppointmentDetails details = response.body();
                         Log.i(TAG, "onResponse: " + details);
                         appointmentDetailsList.add(details);
+                        appointmentDetails.postValue(appointmentDetailsList);
+
                     }
 
                     @Override
                     public void onFailure(Call<AppointmentDetails> call, Throwable t) {
 
                     }
-                });*/
-                appointmentDetailsList.add(response.body());
+                });
             }
-            return appointmentDetailsList;
+            //listMutableLiveData.setValue(appointmentDetailsList);
+
+            return listMutableLiveData;
             //appointmentDetails.setValue(response.);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();

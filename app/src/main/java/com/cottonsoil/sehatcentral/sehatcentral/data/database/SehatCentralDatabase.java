@@ -1,5 +1,6 @@
 package com.cottonsoil.sehatcentral.sehatcentral.data.database;
 
+import android.arch.persistence.room.Database;
 import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
 import android.content.Context;
@@ -7,7 +8,10 @@ import android.util.Log;
 
 import com.cottonsoil.sehatcentral.sehatcentral.data.database.dao.AppointmentDetailDao;
 import com.cottonsoil.sehatcentral.sehatcentral.data.database.dao.AppointmentListDao;
+import com.cottonsoil.sehatcentral.sehatcentral.data.database.entities.AppointmentDetailsEntity;
+import com.cottonsoil.sehatcentral.sehatcentral.data.database.entities.AppointmentEntity;
 
+@Database(entities = {AppointmentDetailsEntity.class, AppointmentEntity.class}, version = 1)
 public abstract class SehatCentralDatabase extends RoomDatabase{
     private static final String LOG_TAG = SehatCentralDatabase.class.getSimpleName();
     private static final String DATABASE_NAME = "sehatCentral";

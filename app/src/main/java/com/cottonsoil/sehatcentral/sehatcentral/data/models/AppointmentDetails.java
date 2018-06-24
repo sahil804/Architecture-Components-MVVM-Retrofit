@@ -9,6 +9,18 @@ public class AppointmentDetails {
     @Expose
     private String display;
 
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
+
+    @SerializedName("uuid")
+    @Expose
+    private String uuid;
+
     public String getDisplay() {
         return display;
     }
@@ -38,7 +50,7 @@ public class AppointmentDetails {
     @Expose
     private TimeSlot timeSlot;
 
-    class TimeSlot {
+    public class TimeSlot {
         @SerializedName("startDate")
         @Expose
         private String startDate;

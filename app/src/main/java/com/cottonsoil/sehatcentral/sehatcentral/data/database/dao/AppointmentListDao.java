@@ -6,8 +6,7 @@ import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
 
-import com.cottonsoil.sehatcentral.sehatcentral.data.models.Appointment;
-import com.cottonsoil.sehatcentral.sehatcentral.data.models.AppointmentList;
+import com.cottonsoil.sehatcentral.sehatcentral.data.database.entities.AppointmentEntity;
 
 import java.util.List;
 
@@ -15,19 +14,19 @@ import java.util.List;
 public interface AppointmentListDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertAppointment(Appointment appointment);
+    void insertAppointment(AppointmentEntity appointment);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertAllAppointments(AppointmentList appointmentList);
+    void insertAllAppointments(List<AppointmentEntity> appointmentList);
 
     @Query("SELECT * FROM appointmentList WHERE uuid = :uuid")
-    Appointment getAppointmentByUuid(String uuid);
+    AppointmentEntity getAppointmentByUuid(String uuid);
 
     @Query("SELECT * FROM appointmentList ORDER BY uuid DESC")
-    LiveData<AppointmentList> getAllAppointmentList();
+    LiveData<List<AppointmentEntity>> getAllAppointmentList();
 
     @Query("SELECT * FROM appointmentList ORDER BY uuid DESC")
-    AppointmentList getAllAppointmentListStatic();
+    List<AppointmentEntity> getAllAppointmentListStatic();
 
     @Query("DELETE FROM appointmentList")
     int deleteAll();

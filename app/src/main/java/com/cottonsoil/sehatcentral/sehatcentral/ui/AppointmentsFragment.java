@@ -1,15 +1,19 @@
 package com.cottonsoil.sehatcentral.sehatcentral.ui;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.cottonsoil.sehatcentral.R;
 import com.cottonsoil.sehatcentral.sehatcentral.data.models.Appointment;
@@ -17,6 +21,7 @@ import com.cottonsoil.sehatcentral.sehatcentral.data.models.AppointmentDetails;
 import com.cottonsoil.sehatcentral.sehatcentral.data.models.AppointmentList;
 import com.cottonsoil.sehatcentral.sehatcentral.data.network.ApiInterface;
 import com.cottonsoil.sehatcentral.sehatcentral.data.network.ServiceBuilder;
+import com.cottonsoil.sehatcentral.sehatcentral.viewmodel.AppointmentViewModel;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -33,12 +38,18 @@ import retrofit2.Response;
  * Use the {@link AppointmentsFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class AppointmentsFragment extends Fragment {
+public class AppointmentsFragment extends Fragment implements AppointmentsAdapter.AppointmentsAdapterOnClickHandler {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String TAG = AppointmentsFragment.class.getSimpleName();
 
     private OnFragmentInteractionListener mListener;
+
+    private AppointmentViewModel mViewModel;
+
+    private AppointmentsAdapter mAppointmentsAdapter;
+
+    private RecyclerView mRecyclerView;
 
     public AppointmentsFragment() {
         // Required empty public constructor
@@ -71,12 +82,31 @@ public class AppointmentsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        View view = inflater.inflate(R.layout.fragment_appointment_list, container, false);
         SharedPreferences mSettings = PreferenceManager.getDefaultSharedPreferences(getActivity());
         final String accessToken = mSettings.getString("accessToken", null);
         String provider = mSettings.getString("provider", null);
         Log.d(TAG,"accessToken: "+accessToken + " provider: "+provider);
 
-        ApiInterface apiInterface = ServiceBuilder.buildService(ApiInterface.class);
+        mRecyclerView = view.findViewById(R.id.recyclerview_appointment_details);
+        LinearLayoutManager layoutManager =
+                new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
+        mRecyclerView.setLayoutManager(layoutManager);
+        mRecyclerView.setHasFixedSize(true);
+        mAppointmentsAdapter = new AppointmentsAdapter(getContext(), this);
+        mRecyclerView.setAdapter(mAppointmentsAdapter);
+
+        mViewModel = ViewModelProviders.of(this).get(AppointmentViewModel.class);
+
+        mViewModel.getAppointmentDetails().observe(this, appointmentDetailsEntities -> {
+            Log.d(TAG,"change detected !!! "+appointmentDetailsEntities);
+            if(appointmentDetailsEntities != null) {
+                Log.d(TAG,"change detected size !!! "+appointmentDetailsEntities.size());
+            }
+            if (appointmentDetailsEntities != null) mAppointmentsAdapter.swapAppointmentDetails(appointmentDetailsEntities);
+        });
+
+        /*ApiInterface apiInterface = ServiceBuilder.buildService(ApiInterface.class);
         Call<AppointmentList> authorizationCall = null;
         try {
             authorizationCall = apiInterface.getAppointmentList(URLDecoder.decode(accessToken, "UTF-8"), provider);
@@ -101,9 +131,9 @@ public class AppointmentsFragment extends Fragment {
             public void onFailure(Call<AppointmentList> call, Throwable t) {
 
             }
-        });
+        });*/
 
-        return inflater.inflate(R.layout.fragment_appointment_list, container, false);
+        return view;
     }
 
     private void getAppointment(AppointmentList list, String accessToken) {
@@ -130,12 +160,6 @@ public class AppointmentsFragment extends Fragment {
             e.printStackTrace();
         }
     }
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
 
     @Override
     public void onAttach(Context context) {
@@ -152,6 +176,11 @@ public class AppointmentsFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public void onClick(String UUID, String name) {
+
     }
 
     /**
