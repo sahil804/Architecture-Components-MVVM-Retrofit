@@ -14,6 +14,8 @@ import com.cottonsoil.sehatcentral.sehatcentral.data.database.entities.Appointme
 
 import java.util.List;
 
+import static com.cottonsoil.sehatcentral.sehatcentral.Constants.DEBUG;
+
 public class AppointmentsAdapter extends RecyclerView.Adapter<AppointmentsAdapter.AppointmentsAdapterViewHolder> {
 
     public static final String TAG = AppointmentsAdapter.class.getSimpleName();
@@ -42,7 +44,7 @@ public class AppointmentsAdapter extends RecyclerView.Adapter<AppointmentsAdapte
 
     @Override
     public void onBindViewHolder(@NonNull AppointmentsAdapterViewHolder holder, int position) {
-        Log.d(TAG,"onBindViewHolder: "+mAppointmentDetailsEntities.get(position).getUuid());
+        if(DEBUG) Log.d(TAG,"onBindViewHolder: "+mAppointmentDetailsEntities.get(position).getUuid());
         holder.tvUuid.setText(mAppointmentDetailsEntities.get(position).getUuid());
     }
 

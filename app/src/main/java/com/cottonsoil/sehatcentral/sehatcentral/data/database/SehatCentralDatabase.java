@@ -11,6 +11,8 @@ import com.cottonsoil.sehatcentral.sehatcentral.data.database.dao.AppointmentLis
 import com.cottonsoil.sehatcentral.sehatcentral.data.database.entities.AppointmentDetailsEntity;
 import com.cottonsoil.sehatcentral.sehatcentral.data.database.entities.AppointmentEntity;
 
+import static com.cottonsoil.sehatcentral.sehatcentral.Constants.DEBUG;
+
 @Database(entities = {AppointmentDetailsEntity.class, AppointmentEntity.class}, version = 1)
 public abstract class SehatCentralDatabase extends RoomDatabase{
     private static final String LOG_TAG = SehatCentralDatabase.class.getSimpleName();
@@ -21,12 +23,12 @@ public abstract class SehatCentralDatabase extends RoomDatabase{
     private static SehatCentralDatabase sInstance;
 
     public static SehatCentralDatabase getInstance(Context context) {
-        Log.d(LOG_TAG, "Getting the database");
+        if(DEBUG) Log.d(LOG_TAG, "Getting the database");
         if (sInstance == null) {
             synchronized (LOCK) {
                 sInstance = Room.databaseBuilder(context.getApplicationContext(),
                         SehatCentralDatabase.class, SehatCentralDatabase.DATABASE_NAME).build();
-                Log.d(LOG_TAG, "Made new database");
+                if(DEBUG) Log.d(LOG_TAG, "Made new database");
             }
         }
         return sInstance;

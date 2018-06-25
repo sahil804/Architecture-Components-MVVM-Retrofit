@@ -19,6 +19,8 @@ import com.cottonsoil.sehatcentral.sehatcentral.data.network.SehatNetworkDataSou
 
 import java.util.List;
 
+import static com.cottonsoil.sehatcentral.sehatcentral.Constants.DEBUG;
+
 public class SehatCentralRepository {
 
     private static final Object LOCK = new Object();
@@ -53,52 +55,48 @@ public class SehatCentralRepository {
                 if (appointmentList == null || (appointmentList != null && appointmentList.size() == 0)) {
                     isNewAppointment = true;
                 }
-                Log.d(TAG, "change detected in appointmentListLiveData " + appointmentList);
+                if(DEBUG) Log.d(TAG, "change detected in appointmentListLiveData " + appointmentList);
                 for (AppointmentEntity appointment : appointmentList) {
                     AppointmentEntity storedAppointment = appointmentListDao.getAppointmentByUuid(appointment.getUuid());
                     if (storedAppointment == null) {
-                        Log.d(TAG, "New Appointment");
+                        if(DEBUG) Log.d(TAG, "New Appointment");
                         isNewAppointment = true;
                         break;
                     } else if (!storedAppointment.getDisplay().equalsIgnoreCase(appointment.getDisplay())) {
-                        Log.d(TAG, String.format("stored display = %s, new display = %s", storedAppointment.getDisplay(),
+                        if(DEBUG) Log.d(TAG, String.format("stored display = %s, new display = %s", storedAppointment.getDisplay(),
                                 appointment.getDisplay()));
                         isNewAppointment = true;
                         break;
                     }
                 }
                 if (isNewAppointment) {
-                    Log.d(TAG, "Old List deleted");
+                    if(DEBUG) Log.d(TAG, "Old List deleted, new Value inserted");
                     mAppointmentListDao.deleteAll();
                     mAppointmentListDao.insertAllAppointments(AppointmentMapper.mapModelToEntity(newappointmentListFromNetwork));
                 }
-                Log.d(TAG, "New values inserted");
             });
         });
-        // TODO: 6/23/2018  below call should be from service
         mSehatNetworkDataSource.fetchAppointmentList();
     }
 
     public synchronized static SehatCentralRepository getInstance(
             AppointmentListDao appointmentListDao, AppointmentDetailDao appointmentDetailDao,
             SehatNetworkDataSource sehatNetworkDataSource, AppExecutors executors) {
-        Log.d(TAG, "Getting the repository");
+        if(DEBUG) Log.d(TAG, "Getting the repository");
         if (sInstance == null) {
             synchronized (LOCK) {
                 sInstance = new SehatCentralRepository(appointmentListDao, appointmentDetailDao,
                         sehatNetworkDataSource, executors);
-                Log.d(TAG, "Made new repository");
+                if(DEBUG) Log.d(TAG, "Made new repository");
             }
         }
         return sInstance;
     }
 
     public void intializedData() {
-        /*initializeData();
-        Date today = SunshineDateUtils.getNormalizedUtcDateForToday();*/
         LiveData<List<AppointmentDetails>> appointmentDetailsList =
                 Transformations.switchMap(mAppointmentListDao.getAllAppointmentList(), (address) -> {
-                    Log.d(TAG, "change detected in getAppointmentDetailsList "+address);
+                    if(DEBUG) Log.d(TAG, "change detected in getAppointmentDetailsList "+address);
                     mExecutors.diskIO().execute(new Runnable() {
                         @Override
                         public void run() {
@@ -107,8 +105,9 @@ public class SehatCentralRepository {
                     });
                     return mSehatNetworkDataSource.getAppointmentDetails();
                 });
+
         mediatorAppointmentDetailsList.addSource(appointmentDetailsList, appointmentDetailsListChanged -> {
-            Log.d(TAG, "change detected in appointmentDetailsList "+appointmentDetailsListChanged);
+            if(DEBUG) Log.d(TAG, "change detected in appointmentDetailsList "+appointmentDetailsListChanged);
             mExecutors.diskIO().execute(new Runnable() {
                 @Override
                 public void run() {
@@ -117,17 +116,10 @@ public class SehatCentralRepository {
                     mediatorAppointmentDetailsList.postValue(mAppointmentDetailDao.getAllAppointmentDetailsListStatic());
                 }
             });
-
         });
 
         mediatorAppointmentDetailsList.addSource(mAppointmentDetailDao.getAllAppointmentDetailsList(), appointmentDetailsListChanged -> {
-            Log.d(TAG, "change detected in mAppointmentDetailDao.getAllAppointmentDetailsList()"+appointmentDetailsListChanged);
-           /* mExecutors.diskIO().execute(new Runnable() {
-                @Override
-                public void run() {
-                    mediatorAppointmentDetailsList.postValue(appointmentDetailsListChanged);
-                }
-            });*/
+            if(DEBUG) Log.d(TAG, "change detected in mAppointmentDetailDao.getAllAppointmentDetailsList()"+appointmentDetailsListChanged);
             mediatorAppointmentDetailsList.setValue(appointmentDetailsListChanged);
 
         });

@@ -41,12 +41,13 @@ public class AppointmentDetails {
     public String toString() {
         return "AppointmentDetails{" +
                 "display='" + display + '\'' +
+                ", uuid='" + uuid + '\'' +
                 ", timeSlot=" + timeSlot +
+                ", paitient=" + paitient +
                 '}';
     }
 
     @SerializedName("timeSlot")
-
     @Expose
     private TimeSlot timeSlot;
 
@@ -82,4 +83,10 @@ public class AppointmentDetails {
                     '}';
         }
     }
+
+    @SerializedName("patient")
+    @Expose
+    private Patient paitient;
+
+
 }

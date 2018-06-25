@@ -36,6 +36,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 import static android.Manifest.permission.READ_CONTACTS;
+import static com.cottonsoil.sehatcentral.sehatcentral.Constants.DEBUG;
 
 /**
  * A login screen that offers login via userName/password.
@@ -159,21 +160,17 @@ public class LoginActivity extends AppCompatActivity {
             // form field with an error.
             focusView.requestFocus();
         } else {
-            // Show a progress spinner, and kick off a background task to
-            // perform the user login attempt.
             showProgress(true);
-            /*mAuthTask = new UserLoginTask(userName, password);
-            mAuthTask.execute((Void) null);*/
             String userCredentials = userName+":"+password;
             String basicAuth = "Basic " + new String(Base64.encode(userCredentials.getBytes(), Base64.NO_WRAP));
-            Log.i(TAG, "basicAuth: "+basicAuth);
+            if(DEBUG) Log.i(TAG, "basicAuth: "+basicAuth);
             ApiInterface apiInterface = ServiceBuilder.buildService(ApiInterface.class);
             Call<Authorization> authorizationCall = apiInterface.loginAccount(basicAuth);
             authorizationCall.enqueue(new Callback<Authorization>() {
                 @Override
                 public void onResponse(Call<Authorization> call, Response<Authorization> response) {
                     showProgress(false);
-                    Log.i(TAG, "onResponse: "+response.body());
+                    if(DEBUG) Log.i(TAG, "onResponse: "+response.body());
                     Toast.makeText(getApplicationContext(), "Successfully Logged in !!!", Toast.LENGTH_LONG).show();
                     SharedPreferences mSettings = PreferenceManager.getDefaultSharedPreferences(LoginActivity.this);
                     Authorization authorization = response.body();
@@ -185,7 +182,7 @@ public class LoginActivity extends AppCompatActivity {
                 @Override
                 public void onFailure(Call<Authorization> call, Throwable t) {
                     showProgress(false);
-                    Log.i(TAG, "onResponse: "+t.getLocalizedMessage());
+                    if(DEBUG) Log.i(TAG, "onResponse: "+t.getLocalizedMessage());
                     Toast.makeText(getApplicationContext(), t.getLocalizedMessage(), Toast.LENGTH_LONG).show();
                 }
             });

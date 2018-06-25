@@ -14,6 +14,8 @@ import com.cottonsoil.sehatcentral.sehatcentral.data.repository.SehatCentralRepo
 
 import java.util.List;
 
+import static com.cottonsoil.sehatcentral.sehatcentral.Constants.DEBUG;
+
 public class AppointmentViewModel extends AndroidViewModel {
     private static final String TAG = AppointmentViewModel.class.getSimpleName();
 
@@ -34,7 +36,7 @@ public class AppointmentViewModel extends AndroidViewModel {
 
     @Override
     protected void onCleared() {
-        Log.d(TAG, "onCleared: ");
+        if(DEBUG) Log.d(TAG, "onCleared: ");
         super.onCleared();
     }
 

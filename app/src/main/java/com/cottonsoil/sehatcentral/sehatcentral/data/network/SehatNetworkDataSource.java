@@ -1,6 +1,5 @@
 package com.cottonsoil.sehatcentral.sehatcentral.data.network;
 
-import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -10,7 +9,6 @@ import android.util.Log;
 import com.cottonsoil.sehatcentral.sehatcentral.data.database.entities.AppointmentEntity;
 import com.cottonsoil.sehatcentral.sehatcentral.data.models.Appointment;
 import com.cottonsoil.sehatcentral.sehatcentral.data.models.AppointmentDetails;
-import com.cottonsoil.sehatcentral.sehatcentral.data.models.AppointmentList;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -21,6 +19,8 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
+import static com.cottonsoil.sehatcentral.sehatcentral.Constants.DEBUG;
 
 public class SehatNetworkDataSource {
 
@@ -36,11 +36,12 @@ public class SehatNetworkDataSource {
     }
 
     private final MutableLiveData<List<AppointmentDetails>> appointmentDetails = new MutableLiveData<>();
+
     public SehatNetworkDataSource(Context appContext) {
         SharedPreferences mSettings = PreferenceManager.getDefaultSharedPreferences(appContext);
         accessToken = mSettings.getString("accessToken", null);
         provider = mSettings.getString("provider", null);
-        Log.d(TAG,"accessToken: "+accessToken + " provider: "+provider);
+        if(DEBUG) Log.d(TAG, "accessToken: " + accessToken + " provider: " + provider);
     }
 
     public MutableLiveData<List<Appointment>> getAppointmentList() {
@@ -49,28 +50,22 @@ public class SehatNetworkDataSource {
 
     public void fetchAppointmentList() {
         ApiInterface apiInterface = ServiceBuilder.buildService(ApiInterface.class);
-        Call<AppointmentList> authorizationCall = null;
+        Call<List<Appointment>> authorizationCall = null;
         try {
             authorizationCall = apiInterface.getAppointmentList(URLDecoder.decode(accessToken, "UTF-8"), provider);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-        authorizationCall.enqueue(new Callback<AppointmentList>() {
+        authorizationCall.enqueue(new Callback<List<Appointment>>() {
             @Override
-            public void onResponse(Call<AppointmentList> call, Response<AppointmentList> response) {
-                AppointmentList list = response.body();
-                Log.i(TAG, "onResponse: " + list);
-                if(list != null) {
-                    for (Appointment appointment :
-                            list.getAppointments()) {
-                        Log.i(TAG, "onResponse: " + appointment);
-                    }
-                    appointmentList.setValue(list.getAppointments());
-                }
+            public void onResponse(Call<List<Appointment>> call, Response<List<Appointment>> response) {
+                List<Appointment> list = response.body();
+                if (DEBUG) Log.i(TAG, "onResponse: " + list);
+                appointmentList.setValue(list);
             }
 
             @Override
-            public void onFailure(Call<AppointmentList> call, Throwable t) {
+            public void onFailure(Call<List<Appointment>> call, Throwable t) {
 
             }
         });
@@ -83,17 +78,17 @@ public class SehatNetworkDataSource {
         try {
             List<AppointmentDetails> appointmentDetailsList = new ArrayList<>();
             int i = 0;
-            for (AppointmentEntity appoint: listAppointment) {
-                if(++i >= 10) {
+            for (AppointmentEntity appoint : listAppointment) {
+                if (++i >= 10) {
                     break;
                 }
                 authorizationCall = apiInterface.getAppointment(URLDecoder.decode(accessToken, "UTF-8"), appoint.getUuid());
-               // Response<AppointmentDetails> response = authorizationCall.execute();
+                // Response<AppointmentDetails> response = authorizationCall.execute();
                 authorizationCall.enqueue(new Callback<AppointmentDetails>() {
                     @Override
                     public void onResponse(Call<AppointmentDetails> call, Response<AppointmentDetails> response) {
                         AppointmentDetails details = response.body();
-                        Log.i(TAG, "onResponse: " + details);
+                        if(DEBUG) Log.i(TAG, "onResponse: " + details);
                         appointmentDetailsList.add(details);
                         appointmentDetails.postValue(appointmentDetailsList);
 
@@ -116,7 +111,6 @@ public class SehatNetworkDataSource {
         }
         return null;
     }
-
 
 
 }

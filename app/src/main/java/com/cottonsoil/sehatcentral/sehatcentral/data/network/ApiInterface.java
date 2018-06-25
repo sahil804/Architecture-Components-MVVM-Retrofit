@@ -1,8 +1,10 @@
 package com.cottonsoil.sehatcentral.sehatcentral.data.network;
 
+import com.cottonsoil.sehatcentral.sehatcentral.data.models.Appointment;
 import com.cottonsoil.sehatcentral.sehatcentral.data.models.AppointmentDetails;
-import com.cottonsoil.sehatcentral.sehatcentral.data.models.AppointmentList;
 import com.cottonsoil.sehatcentral.sehatcentral.data.models.Authorization;
+
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
@@ -16,7 +18,7 @@ public interface ApiInterface {
     Call<Authorization> loginAccount(@Header("Authorization") String authKey);
 
     @GET("ws/rest/v1/appointmentscheduling/appointment")
-    Call<AppointmentList> getAppointmentList(@Header("accesstoken") String accesstoken, @Query("provider") String provider);
+    Call<List<Appointment>> getAppointmentList(@Header("accesstoken") String accesstoken, @Query("provider") String provider);
 
     @GET("ws/rest/v1/appointmentscheduling/appointment/{uri}")
     Call<AppointmentDetails> getAppointment(@Header("accesstoken") String accesstoken, @Path("uri")String uri);
