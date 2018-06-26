@@ -1,5 +1,6 @@
 package com.cottonsoil.sehatcentral.sehatcentral.data.network;
 
+import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -41,6 +42,13 @@ public class SehatNetworkDataSource {
     }
 
     private final MutableLiveData<List<AppointmentDetails>> appointmentDetails = new MutableLiveData<>();
+
+    public MutableLiveData<List<Encounter>> getEncounterListLiveData() {
+        return encounterListLiveData;
+    }
+
+    private final MutableLiveData<List<Encounter>> encounterListLiveData = new MutableLiveData<>();
+
 
     public SehatNetworkDataSource(Context appContext) {
         SharedPreferences mSettings = PreferenceManager.getDefaultSharedPreferences(appContext);
@@ -109,8 +117,6 @@ public class SehatNetworkDataSource {
 
             return listMutableLiveData;
             //appointmentDetails.setValue(response.);
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -123,34 +129,35 @@ public class SehatNetworkDataSource {
             ApiInterface apiInterface = ServiceBuilder.buildService(ApiInterface.class);
             Call<List<ActiveVisit>> activeVisitCall = apiInterface.getPatientActiveVisit(uuid, false);
             Response<List<ActiveVisit>> response = activeVisitCall.execute();
-            Log.d(TAG, "getEncounters response: "+response.body());
-            if(response != null && response.body() != null && response.body().size() > 0) {
-                Log.d(TAG, "getEncounters: "+response.body());
+            Log.d(TAG, "getEncounters response: " + response.body());
+            if (response != null && response.body() != null && response.body().size() > 0) {
+                Log.d(TAG, "getEncounters: " + response.body());
                 ActiveVisit activeVisit = response.body().get(0);
                 String uri = activeVisit.getLinks().get(0).getUri();
-                Log.d(TAG, "getEncounters uri: "+uri);
+                Log.d(TAG, "getEncounters uri: " + uri);
                 Call<ActiveVisitDetails> activeVisitDetailsCall = apiInterface.getPatientActiveVisitDetails(uri);
                 Response<ActiveVisitDetails> activeVisitDetailsResponse = activeVisitDetailsCall.execute();
                 ActiveVisitDetails activeVisitDetails = activeVisitDetailsResponse.body();
                 List<Encounter> encounterList = activeVisitDetails.getEncounters();
-                Log.d(TAG, "getEncounters encounterList: "+encounterList);
+                Log.d(TAG, "getEncounters encounterList: " + encounterList);
                 for (Encounter encounter : encounterList) {
-                    if(encounter.getDisplay().equalsIgnoreCase("Prescription")) {
+                    if (encounter.getDisplay().equalsIgnoreCase("Prescription")) {
                         Call<PrescriptionEncounter> prescriptionEncounterCall =
                                 apiInterface.getPatientActiveVisitPrescription(encounter.getUuid());
                         Response<PrescriptionEncounter> prescriptionEncounterResponse =
                                 prescriptionEncounterCall.execute();
-                        Log.d(TAG, "getEncounters prescriptionEncounterResponse: "+prescriptionEncounterResponse.body());
+                        Log.d(TAG, "getEncounters prescriptionEncounterResponse: " + prescriptionEncounterResponse.body());
+                        encounter = prescriptionEncounterResponse.body();
 
                     }
 
-                    if(encounter.getDisplay().equalsIgnoreCase("Vitals")) {
-                        Call<VitalsEncounter> vitalsEncounterCall = apiInterface.getPatientActiveVisitVitals(encounter.getUuid());
+                    if (encounter.getDisplay().equalsIgnoreCase("Vitals")) {
+                        Call<VitalsEncounter> vitalsEncounterCall =
+                                apiInterface.getPatientActiveVisitVitals(encounter.getUuid());
                         Response<VitalsEncounter> vitalsEncounterResponse = vitalsEncounterCall.execute();
-                        Log.d(TAG, "getEncounters vitalsEncounterResponse"+vitalsEncounterResponse.body());
-
+                        Log.d(TAG, "getEncounters vitalsEncounterResponse" + vitalsEncounterResponse.body());
+                        encounter = vitalsEncounterResponse.body();
                     }
-
                 }
 
             }

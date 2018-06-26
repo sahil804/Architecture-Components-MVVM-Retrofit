@@ -12,15 +12,15 @@ public class Encounter {
 
     @SerializedName("uuid")
     @Expose
-    private String uuid;
+    protected String uuid;
 
     @SerializedName("display")
     @Expose
-    private String display;
+    protected String display;
 
     @SerializedName("links")
     @Expose
-    private List<Link> links = null;
+    protected List<Link> links = null;
 
     @Expose(deserialize = false)
     private List<VitalsEncounter> vitalsEncounters;

@@ -15,6 +15,7 @@ import com.cottonsoil.sehatcentral.sehatcentral.data.mappers.AppointmentDetailMa
 import com.cottonsoil.sehatcentral.sehatcentral.data.mappers.AppointmentMapper;
 import com.cottonsoil.sehatcentral.sehatcentral.data.models.Appointment;
 import com.cottonsoil.sehatcentral.sehatcentral.data.models.AppointmentDetails;
+import com.cottonsoil.sehatcentral.sehatcentral.data.models.Encounter;
 import com.cottonsoil.sehatcentral.sehatcentral.data.network.SehatNetworkDataSource;
 
 import java.util.List;
@@ -30,6 +31,7 @@ public class SehatCentralRepository {
     private final AppointmentDetailDao mAppointmentDetailDao;
     private final MutableLiveData<List<AppointmentDetails>> appointmentDetailsList = new MutableLiveData<>();
     private final MediatorLiveData<List<AppointmentDetailsEntity>> mediatorAppointmentDetailsList = new MediatorLiveData<>();
+    LiveData<List<Encounter>> encounterListLiveData;
     private final SehatNetworkDataSource mSehatNetworkDataSource;
     private final AppExecutors mExecutors;
 
@@ -97,24 +99,16 @@ public class SehatCentralRepository {
         LiveData<List<AppointmentDetails>> appointmentDetailsList =
                 Transformations.switchMap(mAppointmentListDao.getAllAppointmentList(), (address) -> {
                     if(DEBUG) Log.d(TAG, "change detected in getAppointmentDetailsList "+address);
-                    mExecutors.diskIO().execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            mSehatNetworkDataSource.getAppointmentDetailsList(address);
-                        }
-                    });
+                    mExecutors.diskIO().execute(() -> mSehatNetworkDataSource.getAppointmentDetailsList(address));
                     return mSehatNetworkDataSource.getAppointmentDetails();
                 });
 
         mediatorAppointmentDetailsList.addSource(appointmentDetailsList, appointmentDetailsListChanged -> {
             if(DEBUG) Log.d(TAG, "change detected in appointmentDetailsList "+appointmentDetailsListChanged);
-            mExecutors.diskIO().execute(new Runnable() {
-                @Override
-                public void run() {
-                    mAppointmentDetailDao.deleteAll();
-                    mAppointmentDetailDao.insertAllAppointmentDetails(AppointmentDetailMapper.mapModelToEntity(appointmentDetailsListChanged));
-                    mediatorAppointmentDetailsList.postValue(mAppointmentDetailDao.getAllAppointmentDetailsListStatic());
-                }
+            mExecutors.diskIO().execute(() -> {
+                mAppointmentDetailDao.deleteAll();
+                mAppointmentDetailDao.insertAllAppointmentDetails(AppointmentDetailMapper.mapModelToEntity(appointmentDetailsListChanged));
+                mediatorAppointmentDetailsList.postValue(mAppointmentDetailDao.getAllAppointmentDetailsListStatic());
             });
         });
 
@@ -126,11 +120,7 @@ public class SehatCentralRepository {
     }
 
     public void getEncounters(String uuid) {
-        mExecutors.diskIO().execute(new Runnable() {
-            @Override
-            public void run() {
-                mSehatNetworkDataSource.getEncounters(uuid);
-            }
-        });
+        encounterListLiveData = mSehatNetworkDataSource.getEncounterListLiveData();
+        mExecutors.diskIO().execute(() -> mSehatNetworkDataSource.getEncounters(uuid));
     }
 }

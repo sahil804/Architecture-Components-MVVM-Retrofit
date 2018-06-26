@@ -8,15 +8,15 @@ import java.util.List;
 /**
  * Created by sahil on 6/26/2018.
  */
-public class VitalsEncounter {
-    @SerializedName("uuid")
+public class VitalsEncounter extends Encounter{
+    /*@SerializedName("uuid")
     @Expose
     private String uuid;
 
     @SerializedName("display")
     @Expose
     private String display;
-
+*/
     @SerializedName("encounterDatetime")
     @Expose
     private String encounterDatetime;
@@ -25,15 +25,15 @@ public class VitalsEncounter {
     @Expose
     private List<Vital> vital = null;
 
-    @SerializedName("links")
+    /*@SerializedName("links")
     @Expose
     private List<Link> links = null;
-
+*/
     @SerializedName("resourceVersion")
     @Expose
     private String resourceVersion;
 
-    public String getUuid() {
+    /*public String getUuid() {
         return uuid;
     }
 
@@ -47,7 +47,7 @@ public class VitalsEncounter {
 
     public void setDisplay(String display) {
         this.display = display;
-    }
+    }*/
 
     public String getEncounterDatetime() {
         return encounterDatetime;
