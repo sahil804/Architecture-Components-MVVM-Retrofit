@@ -124,4 +124,13 @@ public class SehatCentralRepository {
 
         });
     }
+
+    public void getEncounters(String uuid) {
+        mExecutors.diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                mSehatNetworkDataSource.getEncounters(uuid);
+            }
+        });
+    }
 }

@@ -5,14 +5,19 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-public class Appointment {
+/**
+ * Created by sahil on 6/26/2018.
+ */
+public class ActiveVisit {
 
     @SerializedName("uuid")
     @Expose
     private String uuid;
+
     @SerializedName("display")
     @Expose
     private String display;
+
     @SerializedName("links")
     @Expose
     private List<Link> links = null;
@@ -43,7 +48,7 @@ public class Appointment {
 
     @Override
     public String toString() {
-        return "Appointment{" +
+        return "ActiveVisit{" +
                 "uuid='" + uuid + '\'' +
                 ", display='" + display + '\'' +
                 ", links=" + links +

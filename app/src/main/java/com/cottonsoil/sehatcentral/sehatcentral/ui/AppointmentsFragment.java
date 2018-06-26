@@ -2,6 +2,7 @@ package com.cottonsoil.sehatcentral.sehatcentral.ui;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
@@ -15,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.cottonsoil.sehatcentral.R;
+import com.cottonsoil.sehatcentral.sehatcentral.Constants;
 import com.cottonsoil.sehatcentral.sehatcentral.data.models.Appointment;
 import com.cottonsoil.sehatcentral.sehatcentral.data.models.AppointmentDetails;
 import com.cottonsoil.sehatcentral.sehatcentral.data.network.ApiInterface;
@@ -102,7 +104,10 @@ public class AppointmentsFragment extends Fragment implements AppointmentsAdapte
 
     @Override
     public void onClick(String UUID, String name) {
-
+        Intent intent = new Intent();
+        intent.setClass(getContext(), PatientActivity.class);
+        intent.putExtra(Constants.KEY_PATIENT_UUID, UUID);
+        startActivity(intent);
     }
 
     /**

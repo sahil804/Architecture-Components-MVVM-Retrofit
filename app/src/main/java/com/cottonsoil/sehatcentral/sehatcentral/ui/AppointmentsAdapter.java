@@ -69,7 +69,8 @@ public class AppointmentsAdapter extends RecyclerView.Adapter<AppointmentsAdapte
 
         @Override
         public void onClick(View v) {
-            mClickHandler.onClick("test", "test");
+            mClickHandler.onClick(mAppointmentDetailsEntities.get(getAdapterPosition())
+                    .getUuid(), "test");
         }
     }
 }

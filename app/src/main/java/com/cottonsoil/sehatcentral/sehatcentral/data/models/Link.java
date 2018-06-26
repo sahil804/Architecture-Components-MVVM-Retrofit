@@ -3,7 +3,7 @@ package com.cottonsoil.sehatcentral.sehatcentral.data.models;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class AppointmentLinks {
+public class Link {
 
     @SerializedName("rel")
     @Expose
@@ -22,7 +22,7 @@ public class AppointmentLinks {
 
     @Override
     public String toString() {
-        return "AppointmentLinks{" +
+        return "Link{" +
                 "rel='" + rel + '\'' +
                 ", uri='" + uri + '\'' +
                 '}';

@@ -5,17 +5,28 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-public class Appointment {
+/**
+ * Created by sahil on 6/26/2018.
+ */
+public class Encounter {
 
     @SerializedName("uuid")
     @Expose
     private String uuid;
+
     @SerializedName("display")
     @Expose
     private String display;
+
     @SerializedName("links")
     @Expose
     private List<Link> links = null;
+
+    @Expose(deserialize = false)
+    private List<VitalsEncounter> vitalsEncounters;
+
+    @Expose(deserialize = false)
+    private List<PrescriptionEncounter> prescriptionEncounters;
 
     public String getUuid() {
         return uuid;
@@ -43,10 +54,12 @@ public class Appointment {
 
     @Override
     public String toString() {
-        return "Appointment{" +
+        return "Encounter{" +
                 "uuid='" + uuid + '\'' +
                 ", display='" + display + '\'' +
                 ", links=" + links +
+                ", vitalsEncounters=" + vitalsEncounters +
+                ", prescriptionEncounters=" + prescriptionEncounters +
                 '}';
     }
 }
