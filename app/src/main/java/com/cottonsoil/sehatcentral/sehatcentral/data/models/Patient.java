@@ -3,7 +3,7 @@ package com.cottonsoil.sehatcentral.sehatcentral.data.models;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-class Patient {
+public class Patient {
     @SerializedName("uuid")
     @Expose
     String uuid;

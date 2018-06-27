@@ -10,48 +10,62 @@ import java.util.List;
  */
 public class ActiveVisit {
 
-    @SerializedName("uuid")
+    public List<Visit> getVisits() {
+        return visits;
+    }
+
+    public void setVisits(List<Visit> visits) {
+        this.visits = visits;
+    }
+
+    @SerializedName("results")
     @Expose
-    private String uuid;
+    private List<Visit> visits = null;
 
-    @SerializedName("display")
-    @Expose
-    private String display;
+    public class Visit {
+        @SerializedName("uuid")
+        @Expose
+        private String uuid;
 
-    @SerializedName("links")
-    @Expose
-    private List<Link> links = null;
+        @SerializedName("display")
+        @Expose
+        private String display;
 
-    public String getUuid() {
-        return uuid;
-    }
+        @SerializedName("links")
+        @Expose
+        private List<Link> links = null;
 
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
-    }
+        public String getUuid() {
+            return uuid;
+        }
 
-    public String getDisplay() {
-        return display;
-    }
+        public void setUuid(String uuid) {
+            this.uuid = uuid;
+        }
 
-    public void setDisplay(String display) {
-        this.display = display;
-    }
+        public String getDisplay() {
+            return display;
+        }
 
-    public List<Link> getLinks() {
-        return links;
-    }
+        public void setDisplay(String display) {
+            this.display = display;
+        }
 
-    public void setLinks(List<Link> links) {
-        this.links = links;
-    }
+        public List<Link> getLinks() {
+            return links;
+        }
 
-    @Override
-    public String toString() {
-        return "ActiveVisit{" +
-                "uuid='" + uuid + '\'' +
-                ", display='" + display + '\'' +
-                ", links=" + links +
-                '}';
+        public void setLinks(List<Link> links) {
+            this.links = links;
+        }
+
+        @Override
+        public String toString() {
+            return "ActiveVisit{" +
+                    "uuid='" + uuid + '\'' +
+                    ", display='" + display + '\'' +
+                    ", links=" + links +
+                    '}';
+        }
     }
 }

@@ -19,6 +19,10 @@ public class AppointmentDetailMapper {
         appointmentDetailsEntity.setStartDate(appointmentDetails.getTimeSlot().getStartDate());
         appointmentDetailsEntity.setEndDate(appointmentDetails.getTimeSlot().getEndDate());
         appointmentDetailsEntity.setUuid(appointmentDetails.getUuid());
+        appointmentDetailsEntity.setPatientUuid(appointmentDetails.getPaitient().getUuid());
+        appointmentDetailsEntity.setPatientAge(appointmentDetails.getPaitient().getPerson().getAge());
+        appointmentDetailsEntity.setPatientGender(appointmentDetails.getPaitient().getPerson().getGender());
+        appointmentDetailsEntity.setPatientName(appointmentDetails.getPaitient().getPerson().getName());
 
         return appointmentDetailsEntity;
     }

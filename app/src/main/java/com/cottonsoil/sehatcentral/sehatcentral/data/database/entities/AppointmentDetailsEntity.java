@@ -22,6 +22,50 @@ public class AppointmentDetailsEntity {
     @ColumnInfo(name = "endDate")
     private String endDate;
 
+    @ColumnInfo(name = "patientUuid")
+    private String patientUuid;
+
+    @ColumnInfo(name = "patientAge")
+    private String patientAge;
+
+    @ColumnInfo(name = "patientGender")
+    private String patientGender;
+
+    public String getPatientUuid() {
+        return patientUuid;
+    }
+
+    public void setPatientUuid(String patientUuid) {
+        this.patientUuid = patientUuid;
+    }
+
+    public String getPatientAge() {
+        return patientAge;
+    }
+
+    public void setPatientAge(String patientAge) {
+        this.patientAge = patientAge;
+    }
+
+    public String getPatientGender() {
+        return patientGender;
+    }
+
+    public void setPatientGender(String patientGender) {
+        this.patientGender = patientGender;
+    }
+
+    public String getPatientName() {
+        return patientName;
+    }
+
+    public void setPatientName(String patientName) {
+        this.patientName = patientName;
+    }
+
+    @ColumnInfo(name = "patientName")
+    private String patientName;
+
     public int getId() {
         return id;
     }
@@ -54,6 +98,7 @@ public class AppointmentDetailsEntity {
         this.endDate = endDate;
     }
 
+
     @Override
     public String toString() {
         return "AppointmentDetailsEntity{" +
@@ -61,6 +106,10 @@ public class AppointmentDetailsEntity {
                 ", uuid='" + uuid + '\'' +
                 ", startDate='" + startDate + '\'' +
                 ", endDate='" + endDate + '\'' +
+                ", patientUuid='" + patientUuid + '\'' +
+                ", patientAge='" + patientAge + '\'' +
+                ", patientGender='" + patientGender + '\'' +
+                ", patientName='" + patientName + '\'' +
                 '}';
     }
 }

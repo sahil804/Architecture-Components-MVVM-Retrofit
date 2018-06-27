@@ -1,14 +1,27 @@
 package com.cottonsoil.sehatcentral.sehatcentral.ui;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.cottonsoil.sehatcentral.R;
+import com.cottonsoil.sehatcentral.sehatcentral.Constants;
+import com.cottonsoil.sehatcentral.sehatcentral.data.models.Encounter;
+import com.cottonsoil.sehatcentral.sehatcentral.data.models.PrescriptionEncounter;
+import com.cottonsoil.sehatcentral.sehatcentral.data.models.VitalsEncounter;
+import com.cottonsoil.sehatcentral.sehatcentral.viewmodel.AppointmentViewModel;
+import com.cottonsoil.sehatcentral.sehatcentral.viewmodel.PatientEncountersViewModel;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -19,16 +32,18 @@ import com.cottonsoil.sehatcentral.R;
  * create an instance of this fragment.
  */
 public class PatientFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    public static final String TAG = PatientFragment.class.getSimpleName();
 
     // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private PatientEncountersViewModel mViewModel;
+
+    private PatientEncounterAdapter mPatientEncounterAdapter;
+
+    private RecyclerView mRecyclerView;
 
     private OnFragmentInteractionListener mListener;
+
+    String mPatientUuid;
 
     public PatientFragment() {
         // Required empty public constructor
@@ -42,10 +57,10 @@ public class PatientFragment extends Fragment {
      * @return A new instance of fragment PatientFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static PatientFragment newInstance(String param1) {
+    public static PatientFragment newInstance(String uuid) {
         PatientFragment fragment = new PatientFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
+        args.putString(Constants.KEY_PATIENT_UUID, uuid);
         fragment.setArguments(args);
         return fragment;
     }
@@ -54,8 +69,7 @@ public class PatientFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            mPatientUuid = getArguments().getString(Constants.KEY_PATIENT_UUID);
         }
     }
 
@@ -64,8 +78,40 @@ public class PatientFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_patient, container, false);
-
+        initialiseRecyclerView(view);
+        initialiseViewModel();
         return view;
+    }
+
+    private void initialiseRecyclerView(View view) {
+        mRecyclerView = view.findViewById(R.id.recyclerview_patient_encounters);
+        LinearLayoutManager layoutManager =
+                new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
+        mRecyclerView.setLayoutManager(layoutManager);
+        mRecyclerView.setHasFixedSize(true);
+        mPatientEncounterAdapter = new PatientEncounterAdapter(getContext());
+        mRecyclerView.setAdapter(mPatientEncounterAdapter);
+        List<Encounter> encounterList = new ArrayList<>();
+        mPatientEncounterAdapter.swapEncounters(encounterList);
+    }
+
+    private void initialiseViewModel() {
+        mViewModel = ViewModelProviders.of(this).get(PatientEncountersViewModel.class);
+        mViewModel.getmEncountersLiveData(mPatientUuid).observe(this, encounters -> {
+            Log.d(TAG,"OnChange encounters Observed: "+encounters);
+            for (Encounter encounter: encounters) {
+                if(encounter instanceof PrescriptionEncounter) {
+                    PrescriptionEncounter prescriptionEncounter = (PrescriptionEncounter) encounter;
+                    Log.d(TAG,"OnChange encounters prescriptionEncounter matched: "+prescriptionEncounter);
+                } else if(encounter instanceof VitalsEncounter) {
+                    VitalsEncounter vitalsEncounter = (VitalsEncounter) encounter;
+                    Log.d(TAG,"OnChange encounters VitalsEncounter matched: "+vitalsEncounter);
+                } else {
+                    Log.d(TAG,"OnChange encounters Nothing matched: ");
+                }
+            }
+            mPatientEncounterAdapter.swapEncounters(encounters);
+        });
     }
 
     // TODO: Rename method, update argument and hook method into UI event

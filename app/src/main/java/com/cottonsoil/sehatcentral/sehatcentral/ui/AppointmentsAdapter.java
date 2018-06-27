@@ -37,7 +37,7 @@ public class AppointmentsAdapter extends RecyclerView.Adapter<AppointmentsAdapte
     @Override
     public AppointmentsAdapterViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(
-                parent.getContext()).inflate(R.layout.item_appointment_detail, parent, false);
+                parent.getContext()).inflate(R.layout.layout_appointments_viewholder, parent, false);
         view.setFocusable(true);
         return new AppointmentsAdapterViewHolder(view);
     }
@@ -45,7 +45,9 @@ public class AppointmentsAdapter extends RecyclerView.Adapter<AppointmentsAdapte
     @Override
     public void onBindViewHolder(@NonNull AppointmentsAdapterViewHolder holder, int position) {
         if(DEBUG) Log.d(TAG,"onBindViewHolder: "+mAppointmentDetailsEntities.get(position).getUuid());
-        holder.tvUuid.setText(mAppointmentDetailsEntities.get(position).getUuid());
+        holder.tvUuid.setText(mAppointmentDetailsEntities.get(position).getPatientUuid() + "\n"
+                + mAppointmentDetailsEntities.get(position).getPatientName() + "\n"
+                + mAppointmentDetailsEntities.get(position).getPatientAge());
     }
 
     public void swapAppointmentDetails(final List<AppointmentDetailsEntity> appointmentDetailsEntities) {
@@ -70,7 +72,7 @@ public class AppointmentsAdapter extends RecyclerView.Adapter<AppointmentsAdapte
         @Override
         public void onClick(View v) {
             mClickHandler.onClick(mAppointmentDetailsEntities.get(getAdapterPosition())
-                    .getUuid(), "test");
+                    .getPatientUuid(), "test");
         }
     }
 }

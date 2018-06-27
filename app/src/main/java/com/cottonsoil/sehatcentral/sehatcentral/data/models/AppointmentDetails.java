@@ -88,5 +88,11 @@ public class AppointmentDetails {
     @Expose
     private Patient paitient;
 
+    public Patient getPaitient() {
+        return paitient;
+    }
 
+    public void setPaitient(Patient paitient) {
+        this.paitient = paitient;
+    }
 }

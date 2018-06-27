@@ -31,6 +31,11 @@ public class SehatCentralRepository {
     private final AppointmentDetailDao mAppointmentDetailDao;
     private final MutableLiveData<List<AppointmentDetails>> appointmentDetailsList = new MutableLiveData<>();
     private final MediatorLiveData<List<AppointmentDetailsEntity>> mediatorAppointmentDetailsList = new MediatorLiveData<>();
+
+    public LiveData<List<Encounter>> getEncounterListLiveData() {
+        return encounterListLiveData;
+    }
+
     LiveData<List<Encounter>> encounterListLiveData;
     private final SehatNetworkDataSource mSehatNetworkDataSource;
     private final AppExecutors mExecutors;

@@ -12,6 +12,7 @@ import com.cottonsoil.sehatcentral.sehatcentral.data.models.ActiveVisit;
 import com.cottonsoil.sehatcentral.sehatcentral.data.models.ActiveVisitDetails;
 import com.cottonsoil.sehatcentral.sehatcentral.data.models.Appointment;
 import com.cottonsoil.sehatcentral.sehatcentral.data.models.AppointmentDetails;
+import com.cottonsoil.sehatcentral.sehatcentral.data.models.AppointmentList;
 import com.cottonsoil.sehatcentral.sehatcentral.data.models.Encounter;
 import com.cottonsoil.sehatcentral.sehatcentral.data.models.PrescriptionEncounter;
 import com.cottonsoil.sehatcentral.sehatcentral.data.models.VitalsEncounter;
@@ -21,12 +22,15 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.LongFunction;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 import static com.cottonsoil.sehatcentral.sehatcentral.Constants.DEBUG;
+import static com.cottonsoil.sehatcentral.sehatcentral.Constants.PRESCRIPTIPN;
+import static com.cottonsoil.sehatcentral.sehatcentral.Constants.VITALS;
 
 public class SehatNetworkDataSource {
 
@@ -62,24 +66,28 @@ public class SehatNetworkDataSource {
     }
 
     public void fetchAppointmentList() {
+        if (DEBUG) Log.d(TAG, "fetchAppointmentList");
         ApiInterface apiInterface = ServiceBuilder.buildService(ApiInterface.class);
-        Call<List<Appointment>> authorizationCall = null;
+        Call<AppointmentList> authorizationCall = null;
         try {
-            authorizationCall = apiInterface.getAppointmentList(URLDecoder.decode(accessToken, "UTF-8"), provider);
+            authorizationCall = apiInterface.getAppointmentList(URLDecoder.decode(accessToken, "UTF-8"), provider,
+                    /*"SCHEDULED",*/"2018-06-27","2018-06-28");
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-        authorizationCall.enqueue(new Callback<List<Appointment>>() {
+        authorizationCall.enqueue(new Callback<AppointmentList>() {
             @Override
-            public void onResponse(Call<List<Appointment>> call, Response<List<Appointment>> response) {
-                List<Appointment> list = response.body();
+            public void onResponse(Call<AppointmentList> call, Response<AppointmentList> response) {
+                AppointmentList list = response.body();
                 if (DEBUG) Log.i(TAG, "onResponse: " + list);
-                appointmentList.setValue(list);
+                if (DEBUG) Log.i(TAG, "onResponse size: " + list.getAppointments().size());
+                appointmentList.setValue(list.getAppointments());
             }
 
             @Override
-            public void onFailure(Call<List<Appointment>> call, Throwable t) {
-
+            public void onFailure(Call<AppointmentList> call, Throwable t) {
+                if (DEBUG) Log.i(TAG, "onResponse failure: " + t.getLocalizedMessage() );
+                t.printStackTrace();
             }
         });
     }
@@ -127,38 +135,45 @@ public class SehatNetworkDataSource {
     public void getEncounters(String uuid) {
         try {
             ApiInterface apiInterface = ServiceBuilder.buildService(ApiInterface.class);
-            Call<List<ActiveVisit>> activeVisitCall = apiInterface.getPatientActiveVisit(uuid, false);
-            Response<List<ActiveVisit>> response = activeVisitCall.execute();
+            Call<ActiveVisit> activeVisitCall = apiInterface.getPatientActiveVisit(URLDecoder.decode(accessToken, "UTF-8"),uuid, false);
+            Response<ActiveVisit> response = activeVisitCall.execute();
             Log.d(TAG, "getEncounters response: " + response.body());
-            if (response != null && response.body() != null && response.body().size() > 0) {
+            if (response != null && response.body() != null) {
                 Log.d(TAG, "getEncounters: " + response.body());
-                ActiveVisit activeVisit = response.body().get(0);
-                String uri = activeVisit.getLinks().get(0).getUri();
+                ActiveVisit.Visit activeVisit = response.body().getVisits().get(0);
+                String uri = activeVisit.getUuid();
                 Log.d(TAG, "getEncounters uri: " + uri);
-                Call<ActiveVisitDetails> activeVisitDetailsCall = apiInterface.getPatientActiveVisitDetails(uri);
+                Call<ActiveVisitDetails> activeVisitDetailsCall = apiInterface.getPatientActiveVisitDetails(URLDecoder.decode(accessToken, "UTF-8"),uri);
                 Response<ActiveVisitDetails> activeVisitDetailsResponse = activeVisitDetailsCall.execute();
                 ActiveVisitDetails activeVisitDetails = activeVisitDetailsResponse.body();
+                Log.d(TAG, "getEncounters activeVisitDetails: " + activeVisitDetails);
                 List<Encounter> encounterList = activeVisitDetails.getEncounters();
                 Log.d(TAG, "getEncounters encounterList: " + encounterList);
+                int i = 0;
                 for (Encounter encounter : encounterList) {
-                    if (encounter.getDisplay().equalsIgnoreCase("Prescription")) {
+                    if (encounter.getDisplay().contains(PRESCRIPTIPN)) {
                         Call<PrescriptionEncounter> prescriptionEncounterCall =
-                                apiInterface.getPatientActiveVisitPrescription(encounter.getUuid());
+                                apiInterface.getPatientActiveVisitPrescription(URLDecoder.decode(accessToken, "UTF-8"),encounter.getUuid());
                         Response<PrescriptionEncounter> prescriptionEncounterResponse =
                                 prescriptionEncounterCall.execute();
                         Log.d(TAG, "getEncounters prescriptionEncounterResponse: " + prescriptionEncounterResponse.body());
                         encounter = prescriptionEncounterResponse.body();
+                        encounterList.set(i, encounter);
 
-                    }
-
-                    if (encounter.getDisplay().equalsIgnoreCase("Vitals")) {
+                    } else if (encounter.getDisplay().contains(VITALS)) {
                         Call<VitalsEncounter> vitalsEncounterCall =
-                                apiInterface.getPatientActiveVisitVitals(encounter.getUuid());
+                                apiInterface.getPatientActiveVisitVitals(URLDecoder.decode(accessToken, "UTF-8"),encounter.getUuid());
                         Response<VitalsEncounter> vitalsEncounterResponse = vitalsEncounterCall.execute();
                         Log.d(TAG, "getEncounters vitalsEncounterResponse" + vitalsEncounterResponse.body());
                         encounter = vitalsEncounterResponse.body();
+                        encounterList.set(i, encounter);
+                    } else {
+                        Log.d(TAG, "getEncounters: removing encounters other than prescription and vitals");
+                        encounterList.remove(encounter);
                     }
+                    ++i;
                 }
+                encounterListLiveData.postValue(encounterList);
 
             }
         } catch (IOException e) {
