@@ -17,6 +17,13 @@ android {
         }
     }
 
+    sourceSets {
+        main {
+            java {
+                exclude '**/data/old_database'
+            }
+        }
+    }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
