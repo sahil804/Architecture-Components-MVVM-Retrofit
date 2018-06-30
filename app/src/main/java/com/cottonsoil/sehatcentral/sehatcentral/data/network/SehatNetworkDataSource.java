@@ -40,6 +40,9 @@ public class SehatNetworkDataSource {
     Context appContext;
     String accessToken;
     String provider;
+    // For Singleton instantiation
+    private static final Object LOCK = new Object();
+    private static SehatNetworkDataSource sInstance;
 
     private final MutableLiveData<List<Appointment>> appointmentList = new MutableLiveData<>();
 
@@ -63,41 +66,61 @@ public class SehatNetworkDataSource {
         if (DEBUG) Log.d(TAG, "accessToken: " + accessToken + " provider: " + provider);
     }
 
+
+    /**
+     * Get the singleton for this class
+     */
+    public static SehatNetworkDataSource getInstance(Context context) {
+        Log.d(TAG, "Getting the network data source");
+        if (sInstance == null) {
+            synchronized (LOCK) {
+                sInstance = new SehatNetworkDataSource(context.getApplicationContext());
+                Log.d(TAG, "Made new network data source");
+            }
+        }
+        return sInstance;
+    }
+
     public MutableLiveData<List<Appointment>> getAppointmentList() {
         return appointmentList;
     }
 
     public  MutableLiveData<List<Appointment>> fetchAppointmentList(String date) {
-        if (DEBUG) Log.d(TAG, "fetchAppointmentList: "+date + " next day:"+Utility.getNextDayDateInString(date));
-        ApiInterface apiInterface = ServiceBuilder.buildService(ApiInterface.class);
-        Call<AppointmentList> authorizationCall = null;
-        try {
-            authorizationCall = apiInterface.getAppointmentList(URLDecoder.decode(accessToken, "UTF-8"), provider,
-                    /*"SCHEDULED",*/date, Utility.getNextDayDateInString(date));
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        authorizationCall.enqueue(new Callback<AppointmentList>() {
-            @Override
-            public void onResponse(Call<AppointmentList> call, Response<AppointmentList> response) {
-                AppointmentList list = response.body();
-                if (DEBUG) Log.i(TAG, "onResponse: " + list);
-                if (DEBUG) Log.i(TAG, "onResponse size: " + list.getAppointments().size());
-                List<Appointment> appointments = list.getAppointments();
-                for (Appointment appointment:appointments) {
-                    appointment.setDate(date);
+        if(date != null) {
+            if (DEBUG)
+                Log.d(TAG, "fetchAppointmentList: " + date + " next day:" + Utility.getNextDayDateInString(date));
+            ApiInterface apiInterface = ServiceBuilder.buildService(ApiInterface.class);
+            Call<AppointmentList> authorizationCall = null;
+            try {
+                authorizationCall = apiInterface.getAppointmentList(URLDecoder.decode(accessToken, "UTF-8"), provider,
+                        /*"SCHEDULED",*/date, Utility.getNextDayDateInString(date));
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            authorizationCall.enqueue(new Callback<AppointmentList>() {
+                @Override
+                public void onResponse(Call<AppointmentList> call, Response<AppointmentList> response) {
+                    AppointmentList list = response.body();
+                    if (DEBUG) Log.i(TAG, "onResponse: " + list);
+                    if (DEBUG) Log.i(TAG, "onResponse size: " + list.getAppointments().size());
+                    List<Appointment> appointments = list.getAppointments();
+                    for (Appointment appointment : appointments) {
+                        appointment.setDate(date);
+                    }
+                    appointmentList.setValue(appointments);
+                    if (DEBUG) Log.i(TAG, "onResponse: appointments " + appointments);
                 }
-                appointmentList.setValue(appointments);
-                if (DEBUG) Log.i(TAG, "onResponse: appointments " + appointments);
-            }
 
-            @Override
-            public void onFailure(Call<AppointmentList> call, Throwable t) {
-                if (DEBUG) Log.i(TAG, "onResponse failure: " + t.getLocalizedMessage() );
-                t.printStackTrace();
-            }
-        });
-        return appointmentList;
+                @Override
+                public void onFailure(Call<AppointmentList> call, Throwable t) {
+                    if (DEBUG) Log.i(TAG, "onResponse failure: " + t.getLocalizedMessage());
+                    t.printStackTrace();
+                }
+            });
+            return appointmentList;
+        } else {
+            return null;
+        }
     }
 
     public MutableLiveData<List<AppointmentDetails>> getAppointmentDetailsList(List<AppointmentEntity> listAppointment) {
@@ -114,6 +137,7 @@ public class SehatNetworkDataSource {
                     @Override
                     public void onResponse(Call<AppointmentDetails> call, Response<AppointmentDetails> response) {
                         AppointmentDetails details = response.body();
+                        details.setDate(appoint.getDate());
                         if (DEBUG) Log.i(TAG, "onResponse: " + details);
                         appointmentDetailsList.add(details);
                         if(appointmentDetailsList.size() == listAppointment.size()) {

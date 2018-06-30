@@ -28,13 +28,18 @@
             android:name=".sehatcentral.ui.HomeActivity"
             android:label="@string/title_activity_home"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".sehatcentral.ui.PatientActivity"
+        <activity
+            android:name=".sehatcentral.ui.PatientActivity"
             android:label="@string/title_activity_home"
             android:parentActivityName=".sehatcentral.ui.HomeActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="sehatcentral.ui.HomeActivity" />
         </activity>
+
+        <service
+            android:name=".sehatcentral.scheduler.AppointmentListSync"
+            android:exported="false"></service>
     </application>
 
 </manifest>

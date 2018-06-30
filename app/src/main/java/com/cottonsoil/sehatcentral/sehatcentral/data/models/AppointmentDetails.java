@@ -3,6 +3,8 @@ package com.cottonsoil.sehatcentral.sehatcentral.data.models;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.Date;
+
 public class AppointmentDetails {
 
     @SerializedName("display")
@@ -35,6 +37,17 @@ public class AppointmentDetails {
 
     public void setTimeSlot(TimeSlot timeSlot) {
         this.timeSlot = timeSlot;
+    }
+
+    @Expose(serialize = false, deserialize = false)
+    private Date date;
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
+
+    public Date getDate() {
+        return date;
     }
 
     @Override

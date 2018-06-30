@@ -26,8 +26,14 @@ public interface AppointmentListDao {
     @Query("SELECT * FROM appointmentList ORDER BY uuid DESC")
     LiveData<List<AppointmentEntity>> getAllAppointmentList();
 
+    @Query("SELECT * FROM appointmentList WHERE date =:date")
+    LiveData<List<AppointmentEntity>> getAllAppointmentListByDate(Date date);
+
     @Query("SELECT * FROM appointmentList ORDER BY uuid DESC")
     List<AppointmentEntity> getAllAppointmentListStatic();
+
+    @Query("SELECT * FROM appointmentList WHERE date =:date")
+    List<AppointmentEntity> getAllAppointmentListStaticByDate(Date date);
 
     @Query("DELETE FROM appointmentList")
     int deleteAll();

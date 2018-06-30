@@ -1,5 +1,7 @@
 package com.cottonsoil.sehatcentral.sehatcentral.data.mappers;
 
+import android.util.Log;
+
 import com.cottonsoil.sehatcentral.sehatcentral.Utility;
 import com.cottonsoil.sehatcentral.sehatcentral.data.database.entities.AppointmentDetailsEntity;
 import com.cottonsoil.sehatcentral.sehatcentral.data.database.entities.AppointmentEntity;
@@ -25,6 +27,8 @@ public class AppointmentDetailMapper {
         appointmentDetailsEntity.setPatientAge(appointmentDetails.getPaitient().getPerson().getAge());
         appointmentDetailsEntity.setPatientGender(appointmentDetails.getPaitient().getPerson().getGender());
         appointmentDetailsEntity.setPatientName(appointmentDetails.getPaitient().getPerson().getName());
+        Log.d("sahil","appointmentDetails.getDate()"+appointmentDetails.getDate());
+        appointmentDetailsEntity.setDate(appointmentDetails.getDate());
 
         return appointmentDetailsEntity;
     }

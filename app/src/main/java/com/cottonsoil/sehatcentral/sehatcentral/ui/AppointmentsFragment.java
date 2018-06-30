@@ -25,6 +25,7 @@ import com.cottonsoil.sehatcentral.sehatcentral.data.models.AppointmentDetails;
 import com.cottonsoil.sehatcentral.sehatcentral.data.models.Person;
 import com.cottonsoil.sehatcentral.sehatcentral.data.network.ApiInterface;
 import com.cottonsoil.sehatcentral.sehatcentral.data.network.ServiceBuilder;
+import com.cottonsoil.sehatcentral.sehatcentral.scheduler.AppointmentListSyncUtils;
 import com.cottonsoil.sehatcentral.sehatcentral.viewmodel.AppointmentViewModel;
 
 import java.io.UnsupportedEncodingException;
@@ -35,6 +36,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 import static com.cottonsoil.sehatcentral.sehatcentral.Constants.DEBUG;
+import static java.security.AccessController.getContext;
 
 public class AppointmentsFragment extends Fragment implements View.OnClickListener, AppointmentsAdapter.AppointmentsAdapterOnClickHandler {
 
@@ -74,6 +76,7 @@ public class AppointmentsFragment extends Fragment implements View.OnClickListen
         rightArrow.setOnClickListener(this);
         initialiseRecyclerView(view);
         initialiseViewModel();
+        AppointmentListSyncUtils.initialize(getContext());
         return view;
     }
 
@@ -141,6 +144,7 @@ public class AppointmentsFragment extends Fragment implements View.OnClickListen
             if(counter <= 10) {
                 mViewModel.setCurrentCounter(counter);
                 String date = Utility.getDateAfterXdaysInString(counter);
+                mViewModel.setDate(date);
                 handleViews(counter, date);
                 Log.d(TAG, "Right onClick: "+date);
             }
@@ -150,6 +154,7 @@ public class AppointmentsFragment extends Fragment implements View.OnClickListen
             if(counter >= -2) {
                 mViewModel.setCurrentCounter(counter);
                 String date = Utility.getDateAfterXdaysInString(counter);
+                mViewModel.setDate(date);
                 handleViews(counter, date);
                 Log.d(TAG, "Left onClick: "+date);
             }

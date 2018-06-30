@@ -23,26 +23,26 @@ public class AppointmentMapper {
         return appointment;
     }
 
-    public static AppointmentEntity mapModelToEntity(Appointment appointment) {
+    public static AppointmentEntity mapModelToEntity(Appointment appointment,String date) {
         if (appointment == null) {
             throw new IllegalArgumentException("Cannot transform a null value");
         }
         final AppointmentEntity appointmentEntity = new AppointmentEntity();
         appointmentEntity.setDisplay(appointment.getDisplay());
         appointmentEntity.setUuid(appointment.getUuid());
-        appointmentEntity.setDate(Utility.getDateFromString(appointment.getDate()));
-        Log.d("sahil", "mapModelToEntity: "+Utility.getDateFromString(appointment.getDate()));
+        appointmentEntity.setDate(Utility.getDateFromString(date));
+        Log.d("sahil", "mapModelToEntity: "+Utility.getDateFromString(date));
 
         return appointmentEntity;
     }
 
-    public static List<AppointmentEntity> mapModelToEntity(List<Appointment> appointmentCollection) {
+    public static List<AppointmentEntity> mapModelToEntity(List<Appointment> appointmentCollection, String date) {
         List<AppointmentEntity> appointmentEntityCollection;
 
         if (appointmentCollection != null && !appointmentCollection.isEmpty()) {
             appointmentEntityCollection = new ArrayList<>();
             for (Appointment appointment : appointmentCollection) {
-                appointmentEntityCollection.add(mapModelToEntity(appointment));
+                appointmentEntityCollection.add(mapModelToEntity(appointment, date));
             }
         } else {
             appointmentEntityCollection = Collections.emptyList();

@@ -45,7 +45,7 @@ public class AppointmentViewModel extends AndroidViewModel {
         super(application);
         SehatCentralDatabase database = SehatCentralDatabase.getInstance(getApplication());
         AppExecutors executors = AppExecutors.getInstance();
-        SehatNetworkDataSource networkDataSource = new SehatNetworkDataSource(getApplication());
+        SehatNetworkDataSource networkDataSource = SehatNetworkDataSource.getInstance(getApplication());
         //SehatNetworkDataSource.getInstance(getApplication(), executors);
         mSehatCentralRepository = SehatCentralRepository.getInstance(database.appointmentListDao(), database.appointmentDetailDao(),
                 networkDataSource, executors, mDate);

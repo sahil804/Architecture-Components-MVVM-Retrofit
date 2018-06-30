@@ -34,7 +34,7 @@ public class PatientEncountersViewModel extends AndroidViewModel {
         if(DEBUG) Log.d(TAG, "PatientEncountersViewModel: ");
         SehatCentralDatabase database = SehatCentralDatabase.getInstance(getApplication());
         AppExecutors executors = AppExecutors.getInstance();
-        SehatNetworkDataSource networkDataSource = new SehatNetworkDataSource(getApplication());
+        SehatNetworkDataSource networkDataSource = SehatNetworkDataSource.getInstance(getApplication());
         //SehatNetworkDataSource.getInstance(getApplication(), executors);
         mSehatCentralRepository = SehatCentralRepository.getInstance(database.appointmentListDao(), database.appointmentDetailDao(),
                 networkDataSource, executors, null);
