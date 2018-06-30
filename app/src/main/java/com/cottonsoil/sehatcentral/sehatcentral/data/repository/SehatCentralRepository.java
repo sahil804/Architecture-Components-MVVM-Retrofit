@@ -29,7 +29,7 @@ public class SehatCentralRepository {
     private static SehatCentralRepository sInstance;
     private final AppointmentListDao mAppointmentListDao;
     private final AppointmentDetailDao mAppointmentDetailDao;
-    private final MutableLiveData<List<AppointmentDetails>> appointmentDetailsList = new MutableLiveData<>();
+    private final MutableLiveData<String> date = new MutableLiveData<>();
     private final MediatorLiveData<List<AppointmentDetailsEntity>> mediatorAppointmentDetailsList = new MediatorLiveData<>();
 
     public LiveData<List<Encounter>> getEncounterListLiveData() {
@@ -41,12 +41,11 @@ public class SehatCentralRepository {
     private final AppExecutors mExecutors;
 
     public MediatorLiveData<List<AppointmentDetailsEntity>> getMediatorAppointmentDetailsList() {
-        intializedData();
         return mediatorAppointmentDetailsList;
     }
 
     private SehatCentralRepository(final AppointmentListDao appointmentListDao, AppointmentDetailDao appointmentDetailDao,
-                                   SehatNetworkDataSource sehatNetworkDataSource, AppExecutors executors) {
+                                   SehatNetworkDataSource sehatNetworkDataSource, AppExecutors executors, LiveData<String> date) {
         mAppointmentListDao = appointmentListDao;
         mAppointmentDetailDao = appointmentDetailDao;
         mSehatNetworkDataSource = sehatNetworkDataSource;
@@ -54,7 +53,8 @@ public class SehatCentralRepository {
 
         // As long as the repository exists, observe the network LiveData.
         // If that LiveData changes, update the database.
-        LiveData<List<Appointment>> appointmentListLiveData = mSehatNetworkDataSource.getAppointmentList();
+        LiveData<List<Appointment>> appointmentListLiveData = Transformations.switchMap
+                ( date, (dateChange)-> mSehatNetworkDataSource.fetchAppointmentList(dateChange));
         appointmentListLiveData.observeForever(newappointmentListFromNetwork -> {
             mExecutors.diskIO().execute(() -> {
                 boolean isNewAppointment = false;
@@ -83,17 +83,17 @@ public class SehatCentralRepository {
                 }
             });
         });
-        mSehatNetworkDataSource.fetchAppointmentList();
+        intializedData();
     }
 
     public synchronized static SehatCentralRepository getInstance(
             AppointmentListDao appointmentListDao, AppointmentDetailDao appointmentDetailDao,
-            SehatNetworkDataSource sehatNetworkDataSource, AppExecutors executors) {
+            SehatNetworkDataSource sehatNetworkDataSource, AppExecutors executors, LiveData<String> date) {
         if(DEBUG) Log.d(TAG, "Getting the repository");
         if (sInstance == null) {
             synchronized (LOCK) {
                 sInstance = new SehatCentralRepository(appointmentListDao, appointmentDetailDao,
-                        sehatNetworkDataSource, executors);
+                        sehatNetworkDataSource, executors, date);
                 if(DEBUG) Log.d(TAG, "Made new repository");
             }
         }
@@ -127,5 +127,9 @@ public class SehatCentralRepository {
     public void getEncounters(String uuid) {
         encounterListLiveData = mSehatNetworkDataSource.getEncounterListLiveData();
         mExecutors.diskIO().execute(() -> mSehatNetworkDataSource.getEncounters(uuid));
+    }
+
+    public AppointmentDetailsEntity getAppointmentDetailsByPatientUuid(String uuid) {
+        return null;
     }
 }

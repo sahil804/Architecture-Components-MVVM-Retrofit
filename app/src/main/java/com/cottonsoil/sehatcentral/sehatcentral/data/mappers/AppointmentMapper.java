@@ -1,5 +1,8 @@
 package com.cottonsoil.sehatcentral.sehatcentral.data.mappers;
 
+import android.util.Log;
+
+import com.cottonsoil.sehatcentral.sehatcentral.Utility;
 import com.cottonsoil.sehatcentral.sehatcentral.data.database.entities.AppointmentEntity;
 import com.cottonsoil.sehatcentral.sehatcentral.data.models.Appointment;
 
@@ -27,6 +30,8 @@ public class AppointmentMapper {
         final AppointmentEntity appointmentEntity = new AppointmentEntity();
         appointmentEntity.setDisplay(appointment.getDisplay());
         appointmentEntity.setUuid(appointment.getUuid());
+        appointmentEntity.setDate(Utility.getDateFromString(appointment.getDate()));
+        Log.d("sahil", "mapModelToEntity: "+Utility.getDateFromString(appointment.getDate()));
 
         return appointmentEntity;
     }

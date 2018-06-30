@@ -37,7 +37,7 @@ public class PatientEncountersViewModel extends AndroidViewModel {
         SehatNetworkDataSource networkDataSource = new SehatNetworkDataSource(getApplication());
         //SehatNetworkDataSource.getInstance(getApplication(), executors);
         mSehatCentralRepository = SehatCentralRepository.getInstance(database.appointmentListDao(), database.appointmentDetailDao(),
-                networkDataSource, executors);
+                networkDataSource, executors, null);
         if(DEBUG) Log.d(TAG, "PatientEncountersViewModel: end ");
     }
 
@@ -51,5 +51,9 @@ public class PatientEncountersViewModel extends AndroidViewModel {
         mSehatCentralRepository.getEncounters(uuid);
         mEncountersLiveData = mSehatCentralRepository.getEncounterListLiveData();
         return mEncountersLiveData;
+    }
+
+    public AppointmentDetailsEntity getAppointmentDetailsByPatientUuid(String uuid) {
+        return mSehatCentralRepository.getAppointmentDetailsByPatientUuid(uuid);
     }
 }

@@ -1,5 +1,6 @@
 package com.cottonsoil.sehatcentral.sehatcentral.data.mappers;
 
+import com.cottonsoil.sehatcentral.sehatcentral.Utility;
 import com.cottonsoil.sehatcentral.sehatcentral.data.database.entities.AppointmentDetailsEntity;
 import com.cottonsoil.sehatcentral.sehatcentral.data.database.entities.AppointmentEntity;
 import com.cottonsoil.sehatcentral.sehatcentral.data.models.Appointment;
@@ -16,9 +17,10 @@ public class AppointmentDetailMapper {
             throw new IllegalArgumentException("Cannot transform a null value");
         }
         final AppointmentDetailsEntity appointmentDetailsEntity = new AppointmentDetailsEntity();
-        appointmentDetailsEntity.setStartDate(appointmentDetails.getTimeSlot().getStartDate());
-        appointmentDetailsEntity.setEndDate(appointmentDetails.getTimeSlot().getEndDate());
+        appointmentDetailsEntity.setStartDate(Utility.parserTime(appointmentDetails.getTimeSlot().getStartDate()));
+        appointmentDetailsEntity.setEndDate(Utility.parserTime(appointmentDetails.getTimeSlot().getEndDate()));
         appointmentDetailsEntity.setUuid(appointmentDetails.getUuid());
+        appointmentDetailsEntity.setDisplayStatus(appointmentDetails.getDisplay());
         appointmentDetailsEntity.setPatientUuid(appointmentDetails.getPaitient().getUuid());
         appointmentDetailsEntity.setPatientAge(appointmentDetails.getPaitient().getPerson().getAge());
         appointmentDetailsEntity.setPatientGender(appointmentDetails.getPaitient().getPerson().getGender());

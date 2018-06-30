@@ -3,6 +3,8 @@ package com.cottonsoil.sehatcentral.sehatcentral.viewmodel;
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MutableLiveData;
+import android.arch.lifecycle.Transformations;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
@@ -19,6 +21,22 @@ import static com.cottonsoil.sehatcentral.sehatcentral.Constants.DEBUG;
 public class AppointmentViewModel extends AndroidViewModel {
     private static final String TAG = AppointmentViewModel.class.getSimpleName();
 
+    public LiveData<String> getmDate() {
+        return mDate;
+    }
+
+    public int getCurrentCounter() {
+        return currentCounter;
+    }
+
+    public void setCurrentCounter(int currentCounter) {
+        this.currentCounter = currentCounter;
+    }
+
+    int currentCounter = 0;
+
+    private final MutableLiveData<String> mDate = new MutableLiveData();
+
     private LiveData<List<AppointmentDetailsEntity>> mAppointment;
 
     private SehatCentralRepository mSehatCentralRepository;
@@ -30,7 +48,8 @@ public class AppointmentViewModel extends AndroidViewModel {
         SehatNetworkDataSource networkDataSource = new SehatNetworkDataSource(getApplication());
         //SehatNetworkDataSource.getInstance(getApplication(), executors);
         mSehatCentralRepository = SehatCentralRepository.getInstance(database.appointmentListDao(), database.appointmentDetailDao(),
-                networkDataSource, executors);
+                networkDataSource, executors, mDate);
+        //mAppointment = Transformations.switchMap( mDate, (date)-> mSehatCentralRepository.getMediatorAppointmentDetailsList(date));
         mAppointment = mSehatCentralRepository.getMediatorAppointmentDetailsList();
     }
 
@@ -42,5 +61,10 @@ public class AppointmentViewModel extends AndroidViewModel {
 
     public LiveData<List<AppointmentDetailsEntity>> getAppointmentDetails() {
         return mAppointment;
+    }
+
+    public void setDate(String date) {
+        Log.d(TAG, "setDate: "+date);
+        mDate.setValue(date);
     }
 }

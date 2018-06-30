@@ -10,7 +10,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.cottonsoil.sehatcentral.R;
+import com.cottonsoil.sehatcentral.sehatcentral.Utility;
 import com.cottonsoil.sehatcentral.sehatcentral.data.database.entities.AppointmentDetailsEntity;
+import com.cottonsoil.sehatcentral.sehatcentral.data.models.Person;
 
 import java.util.List;
 
@@ -30,7 +32,7 @@ public class AppointmentsAdapter extends RecyclerView.Adapter<AppointmentsAdapte
     }
 
     public interface AppointmentsAdapterOnClickHandler {
-        void onClick(String UUID, String name);
+        void onClick(String UUID, Person person);
     }
 
     @NonNull
@@ -45,9 +47,12 @@ public class AppointmentsAdapter extends RecyclerView.Adapter<AppointmentsAdapte
     @Override
     public void onBindViewHolder(@NonNull AppointmentsAdapterViewHolder holder, int position) {
         if(DEBUG) Log.d(TAG,"onBindViewHolder: "+mAppointmentDetailsEntities.get(position).getUuid());
-        holder.tvUuid.setText(mAppointmentDetailsEntities.get(position).getPatientUuid() + "\n"
-                + mAppointmentDetailsEntities.get(position).getPatientName() + "\n"
-                + mAppointmentDetailsEntities.get(position).getPatientAge());
+        holder.tvPatientName.setText(mAppointmentDetailsEntities.get(position).getPatientName());
+        holder.tvPatientAgeGender.setText(mAppointmentDetailsEntities.get(position).getPatientAge() + "/"
+                + mAppointmentDetailsEntities.get(position).getPatientGender());
+        holder.tvTimeSlot.setText(mAppointmentDetailsEntities.get(position).getStartDate() + " - "+
+                mAppointmentDetailsEntities.get(position).getEndDate());
+        holder.tvDisplayStatus.setText(Utility.getActualValue(mAppointmentDetailsEntities.get(position).getDisplayStatus()));
     }
 
     public void swapAppointmentDetails(final List<AppointmentDetailsEntity> appointmentDetailsEntities) {
@@ -62,17 +67,27 @@ public class AppointmentsAdapter extends RecyclerView.Adapter<AppointmentsAdapte
     }
 
     public class AppointmentsAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        public TextView tvUuid;
+        public TextView tvPatientName;
+        public TextView tvPatientAgeGender;
+        public TextView tvTimeSlot;
+        public TextView tvDisplayStatus;
         public AppointmentsAdapterViewHolder(View itemView) {
             super(itemView);
-            tvUuid = itemView.findViewById(R.id.tv_uuid);
+            tvPatientName = itemView.findViewById(R.id.tv_patient_name);
+            tvPatientAgeGender = itemView.findViewById(R.id.tv_patient_age_gender);
+            tvTimeSlot = itemView.findViewById(R.id.tv_time_slot);
+            tvDisplayStatus = itemView.findViewById(R.id.display_status);
             itemView.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View v) {
-            mClickHandler.onClick(mAppointmentDetailsEntities.get(getAdapterPosition())
-                    .getPatientUuid(), "test");
+            AppointmentDetailsEntity appointmentDetailsEntity = mAppointmentDetailsEntities.get(getAdapterPosition());
+            Person person = new Person();
+            person.setAge(appointmentDetailsEntity.getPatientAge());
+            person.setName(appointmentDetailsEntity.getPatientName());
+            person.setGender(appointmentDetailsEntity.getPatientGender());
+            mClickHandler.onClick(appointmentDetailsEntity.getPatientUuid(), person);
         }
     }
 }

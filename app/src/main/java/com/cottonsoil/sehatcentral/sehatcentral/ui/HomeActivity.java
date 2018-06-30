@@ -46,6 +46,9 @@ public class HomeActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        navigationView.setCheckedItem(R.id.nav_appointment);
+
+        displayFragment( R.id.nav_appointment);
     }
 
     @Override
@@ -84,14 +87,18 @@ public class HomeActivity extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
 
+        displayFragment(item.getItemId());
+        return true;
+    }
+
+    private void displayFragment(int id) {
         Fragment fragment = null;
         Bundle bundle = new Bundle();
         // Handle navigation view item clicks here.
-        int id = item.getItemId();
 
         if (id == R.id.nav_appointment) {
             fragment = new AppointmentsFragment();
-        } else if (id == R.id.nav_gallery) {
+        } else if (id == R.id.nav_patient) {
 
         } else if (id == R.id.nav_slideshow) {
 
@@ -115,7 +122,6 @@ public class HomeActivity extends AppCompatActivity
                 fragmentTransaction.commit();
             }
         }
-        return true;
     }
 
     @Override

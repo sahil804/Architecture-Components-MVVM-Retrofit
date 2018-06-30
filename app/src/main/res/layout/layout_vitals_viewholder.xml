@@ -1,24 +1,138 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:minHeight="100dp"
-    android:layout_marginTop="8dp"
-    android:layout_marginStart="8dp"
-    android:layout_marginEnd="8dp">
+    android:layout_marginTop="2dp"
+    android:layout_marginBottom="2dp"
+    card_view:cardCornerRadius="4dp"
+    card_view:cardElevation="4dp"
+    card_view:cardUseCompatPadding="true">
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/tv_vitals"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/ly_vitals_head"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-            android:textColor="@color/material_grey_800"
-            android:textStyle="bold" />
-    </RelativeLayout>
+            android:orientation="vertical">
+
+            <TextView
+                style="@style/ContentBase.ContentHeading"
+                android:layout_gravity="center_horizontal"
+                android:text="@string/vitals" />
+
+            <TextView
+                android:id="@+id/tv_vitals_date"
+                style="@style/ContentBase.ContentSubHeading"
+                android:layout_gravity="center_horizontal" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ly_blood_pressure"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <TextView
+                style="@style/ContentBase.ContentHeading.Item.EncounterItem"
+                android:drawableLeft="@drawable/blood_pressure"
+                android:text="@string/systolic_diastolic" />
+
+            <TextView
+                android:id="@+id/tv_bp_value"
+                style="@style/ContentBase.ContentSubHeading"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ly_oxygen_saturation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <TextView
+                style="@style/ContentBase.ContentHeading.Item.EncounterItem"
+                android:drawableLeft="@drawable/oxygen_saturation"
+                android:text="@string/oxygen_saturation" />
+
+            <TextView
+                android:id="@+id/tv_oxygen_sat_value"
+                style="@style/ContentBase.ContentSubHeading"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ly_pulse"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <TextView
+                style="@style/ContentBase.ContentHeading.Item.EncounterItem"
+                android:drawableLeft="@drawable/pulse"
+                android:text="@string/pulse" />
+
+            <TextView
+                android:id="@+id/tv_pulse_value"
+                style="@style/ContentBase.ContentSubHeading"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ly_temperature"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <TextView
+                style="@style/ContentBase.ContentHeading.Item.EncounterItem"
+                android:drawableLeft="@drawable/temperature"
+                android:text="@string/temperature" />
+
+            <TextView
+                android:id="@+id/tv_temperature_value"
+                style="@style/ContentBase.ContentSubHeading"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ly_height"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <TextView
+                style="@style/ContentBase.ContentHeading.Item.EncounterItem"
+                android:drawableLeft="@drawable/height"
+                android:text="@string/height" />
+
+            <TextView
+                android:id="@+id/tv_height_value"
+                style="@style/ContentBase.ContentSubHeading"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ly_weight"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <TextView
+                style="@style/ContentBase.ContentHeading.Item.EncounterItem"
+                android:drawableLeft="@drawable/temperature"
+                android:text="@string/weight" />
+
+            <TextView
+                android:id="@+id/tv_weight_value"
+                style="@style/ContentBase.ContentSubHeading"/>
+        </LinearLayout>
+    </LinearLayout>
 
 </android.support.v7.widget.CardView>

@@ -7,11 +7,11 @@
         <item
             android:id="@+id/nav_appointment"
             android:icon="@drawable/ic_menu_camera"
-            android:title="Import" />
+            android:title="Appointments" />
         <item
-            android:id="@+id/nav_gallery"
+            android:id="@+id/nav_patient"
             android:icon="@drawable/ic_menu_gallery"
-            android:title="Gallery" />
+            android:title="Patient" />
         <item
             android:id="@+id/nav_slideshow"
             android:icon="@drawable/ic_menu_slideshow"

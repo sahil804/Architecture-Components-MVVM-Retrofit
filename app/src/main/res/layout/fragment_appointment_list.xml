@@ -1,10 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".sehatcentral.ui.AppointmentsFragment">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="4dp">
+        <ImageView
+            android:id="@+id/iv_left_arrow"
+            android:src="@drawable/navigate_back"
+            style="@style/navigation_button" />
+
+        <TextView
+            android:id="@+id/tv_date_selected"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            style="@style/ContentBase.ContentHeading"
+            android:layout_weight="1"/>
+
+        <ImageView
+            android:id="@+id/iv_right_arrow"
+            android:src="@drawable/navigate_forward"
+            style="@style/navigation_button" />
+    </LinearLayout>
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerview_appointment_details"
         android:layout_width="match_parent"
@@ -12,4 +35,5 @@
         android:clipToPadding="false"
         android:paddingBottom="8dp"/>
 
-</FrameLayout>
+</LinearLayout>
+

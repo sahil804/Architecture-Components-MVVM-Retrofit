@@ -83,6 +83,15 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
+        SharedPreferences mSettings = PreferenceManager.getDefaultSharedPreferences(this);
+        String accessToken = mSettings.getString("accessToken", null);
+        String provider = mSettings.getString("provider", null);
+        Log.i(TAG, "accessToken: "+accessToken + " provider:"+provider);
+        if(accessToken != null && provider != null) {
+            startActivity(new Intent(this, HomeActivity.class));
+            finish();
+        }
+
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
         mUserNameView.setText("christ_doctor1");
@@ -177,6 +186,7 @@ public class LoginActivity extends AppCompatActivity {
                     mSettings.edit().putString("accessToken", authorization.getAccessToken()).apply();
                     mSettings.edit().putString("provider", authorization.getProviderUuid()).apply();
                     startActivity(new Intent(LoginActivity.this, HomeActivity.class));
+                    finish();
                 }
 
                 @Override
@@ -230,4 +240,3 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 }
-

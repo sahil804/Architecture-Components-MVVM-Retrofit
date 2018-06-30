@@ -8,6 +8,7 @@ import android.arch.persistence.room.Query;
 
 import com.cottonsoil.sehatcentral.sehatcentral.data.database.entities.AppointmentEntity;
 
+import java.util.Date;
 import java.util.List;
 
 @Dao
@@ -30,6 +31,9 @@ public interface AppointmentListDao {
 
     @Query("DELETE FROM appointmentList")
     int deleteAll();
+
+    @Query("DELETE FROM appointmentList WHERE date =:date")
+    int deleteByDate(Date date);
 
     @Query("SELECT COUNT(*) FROM appointmentList")
     int getCount();

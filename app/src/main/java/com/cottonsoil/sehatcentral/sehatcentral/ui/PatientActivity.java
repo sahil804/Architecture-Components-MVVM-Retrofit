@@ -7,6 +7,9 @@ import android.util.Log;
 
 import com.cottonsoil.sehatcentral.R;
 import com.cottonsoil.sehatcentral.sehatcentral.Constants;
+import com.cottonsoil.sehatcentral.sehatcentral.data.models.Person;
+
+import static com.cottonsoil.sehatcentral.sehatcentral.Constants.KEY_PERSON;
 
 public class PatientActivity extends AppCompatActivity implements PatientFragment.OnFragmentInteractionListener{
 
@@ -17,7 +20,8 @@ public class PatientActivity extends AppCompatActivity implements PatientFragmen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_patient);
         String uuid = getIntent().getExtras().getString(Constants.KEY_PATIENT_UUID);
-        PatientFragment fragment = PatientFragment.newInstance(uuid);
+        Person person = getIntent().getExtras().getParcelable(KEY_PERSON);
+        PatientFragment fragment = PatientFragment.newInstance(uuid, person);
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.patient_detail_container, fragment)
                 .commit();

@@ -6,6 +6,7 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:textColorPrimary">@color/color_text</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
@@ -17,14 +18,53 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
-    <style name="content_heading">
-        <item name="android:fontFamily">serif-monospace</item>
-        <item name="android:textSize">30sp</item>
+    <style name="ContentBase">
+        <item name="android:typeface">serif</item>
+        <item name="android:shadowRadius">2</item>
+        <item name="android:shadowDx">1</item>
+        <item name="android:shadowDy">1</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
     </style>
 
-    <style name="person_image">
+
+    <style name="ContentBase.ContentHeading">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:padding">5dp</item>
+    </style>
+
+    <style name="ContentBase.ContentSubHeading">
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="ContentBase.ContentHeading.Item">
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:textSize">16sp</item>
+
+    </style>
+
+    <style name="ContentBase.ContentHeading.Item.EncounterItem">
+        <item name="android:drawablePadding">8dp</item>
+    </style>
+
+    <style name="ContentBase.ContentHeading.Item.AppointmentItem">
+        <item name="android:layout_gravity">center</item>
+    </style>
+
+    <style name="PersonImage">
         <item name="android:layout_width">50dp</item>
         <item name="android:layout_height">50dp</item>
+    </style>
+
+    <style name="navigation_button">
+        <item name="android:layout_width">40dp</item>
+        <item name="android:layout_height">40dp</item>
+        <item name="android:clickable">true</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:padding">5dp</item>
     </style>
 
 </resources>

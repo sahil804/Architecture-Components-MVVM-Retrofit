@@ -5,6 +5,8 @@ import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 
+import java.util.Date;
+
 @Entity(tableName = "appointmentList")
 public class AppointmentEntity {
     @PrimaryKey(autoGenerate = true)
@@ -40,4 +42,14 @@ public class AppointmentEntity {
 
     @ColumnInfo(name = "display")
     private String display;
+
+    private Date date;
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
 }

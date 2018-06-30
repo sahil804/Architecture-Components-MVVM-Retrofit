@@ -11,10 +11,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.cottonsoil.sehatcentral.R;
 import com.cottonsoil.sehatcentral.sehatcentral.Constants;
+import com.cottonsoil.sehatcentral.sehatcentral.data.database.entities.AppointmentDetailsEntity;
 import com.cottonsoil.sehatcentral.sehatcentral.data.models.Encounter;
+import com.cottonsoil.sehatcentral.sehatcentral.data.models.Person;
 import com.cottonsoil.sehatcentral.sehatcentral.data.models.PrescriptionEncounter;
 import com.cottonsoil.sehatcentral.sehatcentral.data.models.VitalsEncounter;
 import com.cottonsoil.sehatcentral.sehatcentral.viewmodel.AppointmentViewModel;
@@ -22,6 +25,9 @@ import com.cottonsoil.sehatcentral.sehatcentral.viewmodel.PatientEncountersViewM
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.cottonsoil.sehatcentral.sehatcentral.Constants.KEY_PATIENT_UUID;
+import static com.cottonsoil.sehatcentral.sehatcentral.Constants.KEY_PERSON;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -34,10 +40,11 @@ import java.util.List;
 public class PatientFragment extends Fragment {
     public static final String TAG = PatientFragment.class.getSimpleName();
 
-    // TODO: Rename and change types of parameters
     private PatientEncountersViewModel mViewModel;
 
     private PatientEncounterAdapter mPatientEncounterAdapter;
+
+    private Person person;
 
     private RecyclerView mRecyclerView;
 
@@ -45,22 +52,18 @@ public class PatientFragment extends Fragment {
 
     String mPatientUuid;
 
+    private TextView tvPatientName;
+    private TextView tvPatientAgeGender;
+
     public PatientFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @return A new instance of fragment PatientFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static PatientFragment newInstance(String uuid) {
+    public static PatientFragment newInstance(String uuid, Person person) {
         PatientFragment fragment = new PatientFragment();
         Bundle args = new Bundle();
-        args.putString(Constants.KEY_PATIENT_UUID, uuid);
+        args.putParcelable(KEY_PERSON, person);
+        args.putString(KEY_PATIENT_UUID, uuid);
         fragment.setArguments(args);
         return fragment;
     }
@@ -69,7 +72,8 @@ public class PatientFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mPatientUuid = getArguments().getString(Constants.KEY_PATIENT_UUID);
+            person = getArguments().getParcelable(KEY_PERSON);
+            mPatientUuid = getArguments().getString(KEY_PATIENT_UUID);
         }
     }
 
@@ -80,6 +84,13 @@ public class PatientFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_patient, container, false);
         initialiseRecyclerView(view);
         initialiseViewModel();
+        tvPatientName = view.findViewById(R.id.tv_patient_name);
+        tvPatientAgeGender = view.findViewById(R.id.tv_patient_age_gender);
+        Log.d(TAG,"onCreateView: "+person);
+        if(person != null) {
+            tvPatientName.setText(person.getName());
+            tvPatientAgeGender.setText(person.getAge() + "/" + person.getGender());
+        }
         return view;
     }
 
@@ -88,7 +99,7 @@ public class PatientFragment extends Fragment {
         LinearLayoutManager layoutManager =
                 new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(layoutManager);
-        mRecyclerView.setHasFixedSize(true);
+        //mRecyclerView.setHasFixedSize(true);
         mPatientEncounterAdapter = new PatientEncounterAdapter(getContext());
         mRecyclerView.setAdapter(mPatientEncounterAdapter);
         List<Encounter> encounterList = new ArrayList<>();
@@ -112,6 +123,7 @@ public class PatientFragment extends Fragment {
             }
             mPatientEncounterAdapter.swapEncounters(encounters);
         });
+        //mAppointmentDetailsEntity = mViewModel.getAppointmentDetailsByPatientUuid(mPatientUuid);
     }
 
     // TODO: Rename method, update argument and hook method into UI event

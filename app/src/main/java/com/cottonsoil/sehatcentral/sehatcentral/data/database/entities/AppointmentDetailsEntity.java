@@ -7,6 +7,8 @@ import android.arch.persistence.room.PrimaryKey;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.Date;
+
 @Entity(tableName = "appointmentDetails")
 public class AppointmentDetailsEntity {
 
@@ -21,6 +23,17 @@ public class AppointmentDetailsEntity {
 
     @ColumnInfo(name = "endDate")
     private String endDate;
+
+    public String getDisplayStatus() {
+        return displayStatus;
+    }
+
+    public void setDisplayStatus(String displayStatus) {
+        this.displayStatus = displayStatus;
+    }
+
+    @ColumnInfo(name = "displayStatus")
+    private String displayStatus;
 
     @ColumnInfo(name = "patientUuid")
     private String patientUuid;
@@ -111,5 +124,15 @@ public class AppointmentDetailsEntity {
                 ", patientGender='" + patientGender + '\'' +
                 ", patientName='" + patientName + '\'' +
                 '}';
+    }
+
+    private Date date;
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
     }
 }

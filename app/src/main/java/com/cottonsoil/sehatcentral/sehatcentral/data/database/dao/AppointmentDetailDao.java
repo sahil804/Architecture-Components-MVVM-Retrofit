@@ -24,6 +24,9 @@ public interface AppointmentDetailDao {
     @Query("SELECT * FROM appointmentDetails WHERE uuid = :uuid")
     AppointmentDetailsEntity getAppointmentByUuid(int uuid);
 
+    @Query("SELECT * FROM appointmentDetails WHERE patientUuid = :uuid")
+    AppointmentDetailsEntity getAppointmentByPatientUuid(String uuid);
+
     @Query("SELECT * FROM appointmentDetails ORDER BY uuid DESC")
     LiveData<List<AppointmentDetailsEntity>> getAllAppointmentDetailsList();
 

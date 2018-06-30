@@ -15,11 +15,20 @@
     <string name="title_activity_home">HomeActivity</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="nav_header_title">Android Studio</string>
-    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_title">Welcome to Sehat Central</string>
+    <string name="nav_header_subtitle">www.cottonsoil.com</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="vitals">VITALS</string>
+    <string name="systolic_diastolic">SYS/DIA</string>
+    <string name="oxygen_saturation">O2 SATURATION</string>
+    <string name="pulse">PULSE</string>
+    <string name="temperature">TEMP</string>
+    <string name="height">HEIGHT</string>
+    <string name="weight">WEIGHT</string>
+    <string name="prescription">PRESCRIPTION</string>
+    <string name="drugs">DRUGS</string>
 </resources>

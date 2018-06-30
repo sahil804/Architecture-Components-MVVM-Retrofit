@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import com.cottonsoil.sehatcentral.sehatcentral.Utility;
 import com.cottonsoil.sehatcentral.sehatcentral.data.database.entities.AppointmentEntity;
 import com.cottonsoil.sehatcentral.sehatcentral.data.models.ActiveVisit;
 import com.cottonsoil.sehatcentral.sehatcentral.data.models.ActiveVisitDetails;
@@ -21,6 +22,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.function.LongFunction;
 
@@ -65,13 +67,13 @@ public class SehatNetworkDataSource {
         return appointmentList;
     }
 
-    public void fetchAppointmentList() {
-        if (DEBUG) Log.d(TAG, "fetchAppointmentList");
+    public  MutableLiveData<List<Appointment>> fetchAppointmentList(String date) {
+        if (DEBUG) Log.d(TAG, "fetchAppointmentList: "+date + " next day:"+Utility.getNextDayDateInString(date));
         ApiInterface apiInterface = ServiceBuilder.buildService(ApiInterface.class);
         Call<AppointmentList> authorizationCall = null;
         try {
             authorizationCall = apiInterface.getAppointmentList(URLDecoder.decode(accessToken, "UTF-8"), provider,
-                    /*"SCHEDULED",*/"2018-06-27","2018-06-28");
+                    /*"SCHEDULED",*/date, Utility.getNextDayDateInString(date));
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
@@ -81,7 +83,12 @@ public class SehatNetworkDataSource {
                 AppointmentList list = response.body();
                 if (DEBUG) Log.i(TAG, "onResponse: " + list);
                 if (DEBUG) Log.i(TAG, "onResponse size: " + list.getAppointments().size());
-                appointmentList.setValue(list.getAppointments());
+                List<Appointment> appointments = list.getAppointments();
+                for (Appointment appointment:appointments) {
+                    appointment.setDate(date);
+                }
+                appointmentList.setValue(appointments);
+                if (DEBUG) Log.i(TAG, "onResponse: appointments " + appointments);
             }
 
             @Override
@@ -90,6 +97,7 @@ public class SehatNetworkDataSource {
                 t.printStackTrace();
             }
         });
+        return appointmentList;
     }
 
     public MutableLiveData<List<AppointmentDetails>> getAppointmentDetailsList(List<AppointmentEntity> listAppointment) {
@@ -100,9 +108,6 @@ public class SehatNetworkDataSource {
             List<AppointmentDetails> appointmentDetailsList = new ArrayList<>();
             int i = 0;
             for (AppointmentEntity appoint : listAppointment) {
-                if (++i >= 10) {
-                    break;
-                }
                 authorizationCall = apiInterface.getAppointment(URLDecoder.decode(accessToken, "UTF-8"), appoint.getUuid());
                 // Response<AppointmentDetails> response = authorizationCall.execute();
                 authorizationCall.enqueue(new Callback<AppointmentDetails>() {
@@ -111,7 +116,9 @@ public class SehatNetworkDataSource {
                         AppointmentDetails details = response.body();
                         if (DEBUG) Log.i(TAG, "onResponse: " + details);
                         appointmentDetailsList.add(details);
-                        appointmentDetails.postValue(appointmentDetailsList);
+                        if(appointmentDetailsList.size() == listAppointment.size()) {
+                            appointmentDetails.postValue(appointmentDetailsList);
+                        }
 
                     }
 
@@ -138,7 +145,7 @@ public class SehatNetworkDataSource {
             Call<ActiveVisit> activeVisitCall = apiInterface.getPatientActiveVisit(URLDecoder.decode(accessToken, "UTF-8"),uuid, false);
             Response<ActiveVisit> response = activeVisitCall.execute();
             Log.d(TAG, "getEncounters response: " + response.body());
-            if (response != null && response.body() != null) {
+            if (response != null && response.body().getVisits().size() > 0) {
                 Log.d(TAG, "getEncounters: " + response.body());
                 ActiveVisit.Visit activeVisit = response.body().getVisits().get(0);
                 String uri = activeVisit.getUuid();
@@ -150,30 +157,41 @@ public class SehatNetworkDataSource {
                 List<Encounter> encounterList = activeVisitDetails.getEncounters();
                 Log.d(TAG, "getEncounters encounterList: " + encounterList);
                 int i = 0;
-                for (Encounter encounter : encounterList) {
-                    if (encounter.getDisplay().contains(PRESCRIPTIPN)) {
-                        Call<PrescriptionEncounter> prescriptionEncounterCall =
-                                apiInterface.getPatientActiveVisitPrescription(URLDecoder.decode(accessToken, "UTF-8"),encounter.getUuid());
-                        Response<PrescriptionEncounter> prescriptionEncounterResponse =
-                                prescriptionEncounterCall.execute();
-                        Log.d(TAG, "getEncounters prescriptionEncounterResponse: " + prescriptionEncounterResponse.body());
-                        encounter = prescriptionEncounterResponse.body();
-                        encounterList.set(i, encounter);
-
-                    } else if (encounter.getDisplay().contains(VITALS)) {
-                        Call<VitalsEncounter> vitalsEncounterCall =
-                                apiInterface.getPatientActiveVisitVitals(URLDecoder.decode(accessToken, "UTF-8"),encounter.getUuid());
-                        Response<VitalsEncounter> vitalsEncounterResponse = vitalsEncounterCall.execute();
-                        Log.d(TAG, "getEncounters vitalsEncounterResponse" + vitalsEncounterResponse.body());
-                        encounter = vitalsEncounterResponse.body();
-                        encounterList.set(i, encounter);
-                    } else {
-                        Log.d(TAG, "getEncounters: removing encounters other than prescription and vitals");
-                        encounterList.remove(encounter);
+                if(encounterList != null) {
+                    Iterator<Encounter> iter = encounterList.iterator();
+                    //for (Encounter encounter : encounterList)
+                    while (iter.hasNext()) {
+                        Encounter encounter = iter.next();
+                        if (encounter.getDisplay().contains(PRESCRIPTIPN)) {
+                            Call<PrescriptionEncounter> prescriptionEncounterCall =
+                                    apiInterface.getPatientActiveVisitPrescription(URLDecoder.decode(accessToken, "UTF-8"), encounter.getUuid());
+                            Response<PrescriptionEncounter> prescriptionEncounterResponse =
+                                    prescriptionEncounterCall.execute();
+                            Log.d(TAG, "getEncounters prescriptionEncounterResponse: " + prescriptionEncounterResponse.body());
+                            encounter = prescriptionEncounterResponse.body();
+                            encounterList.set(i, encounter);
+                        } else if (encounter.getDisplay().contains(VITALS)) {
+                            Call<VitalsEncounter> vitalsEncounterCall =
+                                    apiInterface.getPatientActiveVisitVitals(URLDecoder.decode(accessToken, "UTF-8"), encounter.getUuid());
+                            Response<VitalsEncounter> vitalsEncounterResponse = vitalsEncounterCall.execute();
+                            Log.d(TAG, "getEncounters vitalsEncounterResponse" + vitalsEncounterResponse.body());
+                            encounter = vitalsEncounterResponse.body();
+                            encounterList.set(i, encounter);
+                        }
+                        ++i;
                     }
-                    ++i;
+                    iter = encounterList.iterator();
+                    while (iter.hasNext()) {
+                        Encounter encounter = iter.next();
+                        if (!encounter.getDisplay().contains(PRESCRIPTIPN) && !encounter.getDisplay().contains(VITALS)) {
+                            Log.d(TAG, "getEncounters: removing encounters other than prescription and vitals");
+                            iter.remove();
+                        }
+                    }
+                    encounterListLiveData.postValue(encounterList);
+                } else {
+                    Log.e(TAG, "getEncounters: encounterList "+encounterList );
                 }
-                encounterListLiveData.postValue(encounterList);
 
             }
         } catch (IOException e) {

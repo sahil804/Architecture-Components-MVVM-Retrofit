@@ -1,5 +1,8 @@
 package com.cottonsoil.sehatcentral.sehatcentral.data.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -36,50 +39,4 @@ public class Patient {
     @Expose
     private Person person;
 
-    public class Person {
-        @SerializedName("display")
-        @Expose
-        String name;
-
-        @SerializedName("gender")
-        @Expose
-        String gender;
-
-        @SerializedName("age")
-        @Expose
-        String age;
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public String getGender() {
-            return gender;
-        }
-
-        public void setGender(String gender) {
-            this.gender = gender;
-        }
-
-        public String getAge() {
-            return age;
-        }
-
-        public void setAge(String age) {
-            this.age = age;
-        }
-
-        @Override
-        public String toString() {
-            return "Person{" +
-                    "name='" + name + '\'' +
-                    ", gender='" + gender + '\'' +
-                    ", age='" + age + '\'' +
-                    '}';
-        }
-    }
 }
